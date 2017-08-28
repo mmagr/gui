@@ -1,8 +1,8 @@
--- cool middleware name here -- Graphical Management Interface
+dojot Graphical Management Interface
 ==============================================================
 
 This package implements a WEB user interface for the management and configuration of the
-middleware's basic functionality.
+dojot's basic functionality.
 
 
 # Build
@@ -11,7 +11,6 @@ To generate a production-ready version of the interface, run the commands below.
 
 ```shell
 npm install
-bower install
 npm run build
 ```
 
@@ -21,7 +20,6 @@ To setup a development server environment, run the commands below.
 
 ```shell
 npm install
-bower install
 npm run watch
 ```
 
@@ -32,7 +30,6 @@ the user interface.
 
 ```shell
 npm install
-bower install
 npm run build
 docker build -f docker/Dockerfile -t [tag name] .
 ```

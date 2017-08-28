@@ -9,7 +9,6 @@ import FlowStore from '../../stores/FlowStore';
 import FlowActions from '../../actions/FlowActions';
 
 import {PageHeader} from "../../containers/full/PageHeader";
-import Filter from "../utils/Filter";
 import util from "../../comms/util/util";
 
 function SummaryItem(props) {

@@ -10,6 +10,10 @@ import FlowStore from '../../stores/FlowStore';
 import AltContainer from 'alt-container';
 import util from '../../comms/util/util';
 
+import MaterialInput from "../../components/MaterialInput";
+
+// require('./vendor.js')
+
 class FlowCanvas extends Component {
   constructor(props) {
     super(props);
@@ -263,25 +267,16 @@ class NameForm extends Component {
     super(props);
   }
 
-  componentDidMount() {
-    Materialize.updateTextFields();
-  }
-
-  componentDidUpdate() {
-    Materialize.updateTextFields();
-  }
-
   render() {
     return (
-      <div className="input-field col s8">
-        <label htmlFor="fld_name">Flow name</label>
-        <input id="fld_flowname" type="text"
-          name="name" value={this.props.flowName} className="no-margin"
-          key="name" onChange={(e) => {
-            e.preventDefault();
-            FlowActions.setName(e.target.value)
-          }} />
-      </div>
+      <MaterialInput id="fld_flowname" name="name" className="col s8"
+                     value={this.props.flowName}
+                     onChange={(e) => {
+                       e.preventDefault();
+                       FlowActions.setName(e.target.value)
+                     }} >
+        Flow name
+      </MaterialInput>
     )
   }
 }

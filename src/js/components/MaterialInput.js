@@ -7,7 +7,6 @@ class MaterialInput extends Component {
     super();
     this.isValid = this.isValid.bind(this);
     this.getName = this.getName.bind(this);
-    this.getType = this.getType.bind(this);
   }
 
   isValid() {
@@ -33,14 +32,6 @@ class MaterialInput extends Component {
     return this.props.id;
   }
 
-  getType() {
-    if (this.props.type !== undefined) {
-      return this.props.type;
-    }
-
-    return "text";
-  }
-
   render() {
     let valid = true;
     let error = this.props.error;
@@ -57,9 +48,12 @@ class MaterialInput extends Component {
       }
     }
 
+    const outerClass = "input-field " + (this.props.className ? this.props.className : "");
+    const labelClass = (this.props.value.length > 0 ? "active " : "");
+
     return (
-      <span>
-        <input type={this.getType()}
+      <div className={outerClass}>
+        <input type="text"
                id={this.props.id}
                name={this.getName()}
                key={this.getName()}
@@ -69,10 +63,11 @@ class MaterialInput extends Component {
         />
         <label htmlFor={this.props.id}
                data-error={this.props.error}
-               data-success="">
+               data-success=""
+               className={labelClass}>
           {this.props.children}
         </label>
-      </span>
+      </div>
     )
   }
 }

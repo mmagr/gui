@@ -1319,6 +1319,11 @@
       "from": "graceful-readlink@>=1.0.0",
       "resolved": "https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz"
     },
+    "hammerjs": {
+      "version": "2.0.8",
+      "from": "hammerjs@>=2.0.8 <3.0.0",
+      "resolved": "https://registry.npmjs.org/hammerjs/-/hammerjs-2.0.8.tgz"
+    },
     "handle-thing": {
       "version": "1.2.5",
       "from": "handle-thing@>=1.2.5 <2.0.0",
@@ -1675,6 +1680,16 @@
       "from": "isstream@>=0.1.2 <0.2.0",
       "resolved": "https://registry.npmjs.org/isstream/-/isstream-0.1.2.tgz"
     },
+    "jquery": {
+      "version": "3.2.1",
+      "from": "jquery@>=3.0.0 <4.0.0||>=2.1.4 <3.0.0",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-3.2.1.tgz"
+    },
+    "jquery-ui-dist": {
+      "version": "1.12.1",
+      "from": "jquery-ui-dist@latest",
+      "resolved": "https://registry.npmjs.org/jquery-ui-dist/-/jquery-ui-dist-1.12.1.tgz"
+    },
     "js-base64": {
       "version": "2.1.9",
       "from": "js-base64@>=2.1.8 <3.0.0",
@@ -1890,6 +1905,11 @@
       "version": "1.0.1",
       "from": "map-obj@>=1.0.1 <2.0.0",
       "resolved": "https://registry.npmjs.org/map-obj/-/map-obj-1.0.1.tgz"
+    },
+    "materialize-css": {
+      "version": "0.100.1",
+      "from": "materialize-css@latest",
+      "resolved": "https://registry.npmjs.org/materialize-css/-/materialize-css-0.100.1.tgz"
     },
     "media-typer": {
       "version": "0.3.0",

@@ -9,8 +9,13 @@ import Gatekeeper from './containers/login/Gatekeeper.js';
 import AltContainer from 'alt-container';
 import LoginStore from './stores/LoginStore';
 
+// window.$ = require('jquery');
+// window.jQuery = require('jquery');
+// require ('materialize-css/dist/js/materialize.js');
+require ('materialize-css/dist/css/materialize.min.css');
+require ('font-awesome/scss/font-awesome.scss');
 require ('../sass/app.scss');
-require ('../components/font-awesome/scss/font-awesome.scss');
+
 
 function Main(props) {
   return (
@@ -20,15 +25,4 @@ function Main(props) {
   )
 }
 
-/*
- * TODO This is not nice, and makes me really sad
- * Currently there are two alternatives to this - the first is to properly
- * implement the input fields from materialize on react, thus removing the need
- * to Materialize.updateTextFields() on componentDidMount() on a number of forms.
- * The second is to include materialize's javascript as a js dependency, thus
- * guaranteeing that it is loaded before this runs. This has the side effect of
- * making the already huge devices.js assembled file even larger.
- */
-$(document).ready(() => {
-  ReactDOM.render(<Main/>, document.getElementById('app'));
-})
+ReactDOM.render(<Main/>, document.getElementById('app'));

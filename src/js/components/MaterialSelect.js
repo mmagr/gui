@@ -31,14 +31,19 @@ class MaterialSelect extends Component {
 
 
   render() {
+    const outerClass = "input-field " + (this.props.className ? this.props.className : "");
+
     return (
-      <select id={this.props.id}
-              name={this.props.name}
-              value={this.props.value}
-              ref='dropdown'
-              onChange={this._handler} >
-        {this.props.children}
-      </select>
+      <div className={outerClass}>
+        <select id={this.props.id}
+                name={this.props.name}
+                value={this.props.value}
+                ref='dropdown'
+                onChange={this._handler} >
+          {this.props.children}
+        </select>
+        { this.props.label && (<label htmlFor={this.props.id}>{this.props.label}</label>)}
+      </div>
     )
   }
 }

@@ -29,7 +29,6 @@ module.exports = {
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    // contentBase: path.join(__dirname, "dist"),
     publicPath: "http://localhost:8888/"
   },
   module: {
@@ -45,6 +44,13 @@ module.exports = {
           {loader:'style-loader'},
           {loader:'css-loader', options:{sourceMap: true}},
           {loader:'sass-loader', options:{sourceMap: true}}
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {loader:'style-loader'},
+          {loader:'css-loader', options:{sourceMap: true}},
         ]
       },
       {
@@ -76,14 +82,15 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       { from: 'src/html/index.html', to: 'index.html' },
-      { from: 'src/components', to: 'components' },
-      // { from: 'src/js/mashup', to: 'mashup' },
       { from: 'src/js/views/flows/vendor.js', to: 'js/vendor.js' },
       { from: 'src/js/polyfills/localStorage.js', to: 'js/localStorage.js' },
       { from: 'node_modules/leaflet/dist/leaflet.css', to: 'leaflet.css' },
       { from: 'node_modules/leaflet/dist/images', to: 'images' },
       { from: 'node_modules/ace-builds/src-min', to: 'js/ace'},
+      { from: 'node_modules/materialize-css/dist/js/materialize.min.js', to: 'js/materialize.js'},
+      { from: 'node_modules/jquery/dist/jquery.min.js', to: 'js/jquery.js'},
+      { from: 'node_modules/jquery-ui-dist/jquery-ui.min.js', to: 'js/jquery.ui.js'},
       { from: 'src/img', to: 'images' }
-    ])
+    ]),
   ]
 };

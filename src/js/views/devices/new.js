@@ -310,10 +310,15 @@ class NewAttr extends Component {
 
   componentDidMount() {
     // materialize jquery makes me sad
-    let modalElement = ReactDOM.findDOMNode(this.refs.modal);
-    $(modalElement).ready(function() {
-      $('.modal').modal();
-    })
+    try {
+      let modalElement = ReactDOM.findDOMNode(this.refs.modal);
+      $(modalElement).modal();
+      // $(modalElement).ready(function() {
+      //   $('.modal').modal();
+      // })
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   isNameValid(name) {
@@ -421,42 +426,39 @@ class NewAttr extends Component {
 
   cleanBuffer(event){
     ErrorActions.reset();
+    let modalElement = ReactDOM.findDOMNode(this.refs.modal);
+    $(modalElement).modal('open');
   }
 
   render() {
     return (
       <span>
-        <button data-target="newAttrsForm" className="btn-flat waves waves-light" onClick={this.cleanBuffer}>new</button>
+        <button data-target="newAttrsForm" className="btn-flat waves waves-light" onClick={this.cleanBuffer}>
+          new
+        </button>
         <div className="modal visible-overflow-y" id="newAttrsForm" ref="modal">
           <div className="modal-content full">
             <div className="title row">New Attribute</div>
             <form className="row" onSubmit={this.submit}>
               <div className="row">
-                <div className="input-field col s12" >
-                  <MaterialInput id="fld_name" value={this.props.newAttr.name}
-                                 error={this.props.fieldError['name']}
-                                 name="name" onChange={this.handleChange}>
-                    Name
-                  </MaterialInput>
-                </div>
-                <div className="input-field col s4" >
-                  <MaterialSelect id="fld_type" name="type" key="protocol"
-                                  value={this.props.newAttr.type} onChange={this.handleChange} >
-                    {this.availableTypes.map((opt) =>
-                      <option value={opt.value} key={opt.label}>{opt.label}</option>
-                    )}
-                  </MaterialSelect>
-                  <label htmlFor="fld_type">Type</label>
-                </div>
-                <div className="input-field col s8">
-                  <MaterialInput id="fld_value" value={this.props.newAttr.value}
-                                 error={this.props.fieldError['value']}
-                                 name="value" onChange={this.handleChange}>
-                    Static value
-                  </MaterialInput>
-                </div>
+                <MaterialInput id="fld_name" value={this.props.newAttr.name} className="col s12"
+                               error={this.props.fieldError['name']}
+                               name="name" onChange={this.handleChange}>
+                  Name
+                </MaterialInput>
+                <MaterialSelect id="fld_type" name="type" key="protocol" className="col s4"
+                                value={this.props.newAttr.type} onChange={this.handleChange}
+                                label="Type" >
+                  {this.availableTypes.map((opt) =>
+                    <option value={opt.value} key={opt.label}>{opt.label}</option>
+                  )}
+                </MaterialSelect>
+                <MaterialInput id="fld_value" value={this.props.newAttr.value} className="col s8"
+                               error={this.props.fieldError['value']}
+                               name="value" onChange={this.handleChange}>
+                  Static value
+                </MaterialInput>
               </div>
-
               <div className="row right">
                 <div className="col">
                   <button type="submit" className="btn waves waves-light">save</button>
@@ -482,14 +484,6 @@ class DeviceForm extends Component {
 
   componentWillUnmount() {
     FormActions.set(null);
-  }
-
-  componentDidMount() {
-    Materialize.updateTextFields();
-  }
-
-  componentDidUpdate() {
-    Materialize.updateTextFields();
   }
 
   handleChange(event) {
@@ -520,16 +514,13 @@ class DeviceForm extends Component {
                 </div>
 
                 <div className="col s12">
-                  <div className="input-field col s4" >
-                    <MaterialSelect id="fld_prot" name="protocol"
-                                    value={this.props.device.protocol}
-                                    onChange={this.handleChange} >
-                      <option value="MQTT">MQTT</option>
-                      <option value="virtual">Virtual</option>
-                    </MaterialSelect>
-                    <label htmlFor="fld_prot">Device type</label>
-                  </div>
-
+                  <MaterialSelect id="fld_prot" name="protocol" className="col s4"
+                                  label="Device type"
+                                  value={this.props.device.protocol}
+                                  onChange={this.handleChange} >
+                    <option value="MQTT">MQTT</option>
+                    <option value="virtual">Virtual</option>
+                  </MaterialSelect>
                   <div className="col s8" >
                     <TagForm tags={this.props.device.tags}/>
                   </div>

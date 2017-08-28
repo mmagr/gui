@@ -11,7 +11,6 @@ import MeasureStore from '../../stores/MeasureStore';
 import MeasureActions from '../../actions/MeasureActions';
 
 import { PageHeader } from "../../containers/full/PageHeader";
-import Filter from "../utils/Filter";
 
 import AltContainer from 'alt-container';
 
