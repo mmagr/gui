@@ -4,9 +4,7 @@ node_js: 4
 script:
   - npm run build
 install:
-  - npm install -g bower
   - npm install
-  - bower install
 services:
   - docker
 after_success:
