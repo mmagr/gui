@@ -17,14 +17,13 @@ import Todo from './views/utils/todo';
 export default (
   <Router history={hashHistory}>
     <Route path="/" component={Full}>
-      <IndexRoute component={DeviceMap} />
-      <Route path="dashboard" name="Home" component={DeviceMap} />
+      <IndexRoute component={Devices} />
       <Route name="Device manager" >
-        <Route path="deviceManager" name="Device manager" component={DeviceMap} />
+        <Route path="deviceManager" name="Device manager" component={Devices} />
         <Route path="device" name="Devices">
-          <IndexRoute component={DeviceMap} />
+          <IndexRoute component={Devices} />
           <Route path="list" name="Device list" component={Devices} />
-          <Route path="stats" name="Device Dashboard" component={DeviceMap} />
+          <Route path="map" name="Device list" component={Devices} />
           <Route path="new" name="" component={NewDevice} />
           <Route path="id/:device/detail" name="Device detail" component={ViewDevice} />
           <Route path="id/:device/edit" name="Device edit" component={NewDevice} />
