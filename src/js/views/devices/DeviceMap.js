@@ -123,23 +123,16 @@ class PositionRenderer extends Component {
       )
     }
 
-    function parsePosLatLng(p) {
-      return [22.1,22.2];
-    }
-
     function getPinColor(p) {
       return darkBluePin;
     }
 
-    let deviceData = this.props.devices.devices;
-    let parsedEntries = this.props.points.map((k) => {
-      let pos = parsePosLatLng(k);
-      if (pos !== null) {
-        let pinIcon = getPinColor(k);
-        return {id:k.id, pos:pos, pin:pinIcon, name: deviceData[k.id].label};
+    let parsedEntries = this.props.devices.reduce((result, k) => {
+      if (k.position !== undefined) {
+        result.push({id:k.id, pos:k.position, pin:getPinColor(k), name: k.label});
       }
-      return undefined;
-    });
+      return result;
+    }, []);
 
 
     if (parsedEntries.length == 0) {
@@ -185,26 +178,6 @@ class PositionRenderer extends Component {
           </Marker>
         ))}
       </Map>
-    )
-  }
-}
-
-class MapRender extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    if ((this.props.position != null) && ('name' in this.props.position)) {
-      MeasureActions.fetchMeasures.defer(this.props.device.id, this.props.device.protocol, this.props.position);
-    }
-  }
-
-  render () {
-    return (
-      <AltContainer stores={{measures: MeasureStore, devices: DeviceStore}}>
-      <PositionRenderer points={this.props.devices}/>
-      </AltContainer>
     )
   }
 }
@@ -267,16 +240,6 @@ class DeviceMap extends Component {
       }
     }
 
-    let positionList = filteredList.map((x) => {
-      let positionAttr = x.attrs.find(function(k){return k.name == "lng";});
-      // @TODO We should also check the lat param;
-      if (positionAttr) {
-        return {'id': x.id, 'geo': "lng", 'static': false};
-      }
-      return undefined;
-    }).filter(function(k){return k != undefined;});
-
-
     const device_icon  = (<img src='images/icons/chip.png' />)
     const location_icon  = (<img src='images/icons/location.png' />)
     const location_active_icon  = (<img src='images/icons/location_active.png' />)
@@ -290,7 +253,7 @@ class DeviceMap extends Component {
           {this.props.toggle}
         </SubHeader>
         <div className="deviceMapCanvas col m12 s12 relative">
-          <MapRender devices={positionList} />
+          <PositionRenderer devices={filteredList} />
           <div className="col devicePainel full-height">
             <SideBar devices={this.props.devices} />
           </div>

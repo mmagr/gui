@@ -1,4 +1,6 @@
 import deviceManager from '../comms/devices/DeviceManager';
+import util from '../comms/util';
+import MeasureActions from './MeasureActions'
 
 var alt = require('../alt');
 
@@ -36,7 +38,23 @@ class DeviceActions {
   }
 
   updateDevices(list) {
-    return list;
+    return (dispatch) => {
+
+      // triggers store update (w/o positioning)
+      dispatch(list);
+
+      function getUrl(device, query) {
+        let url = '/history/device/' + device.id + '/history'
+        if (query) {
+          url += "?" + query
+        }
+        return url;
+      }
+
+      list.map((device) => {
+        MeasureActions.fetchPosition.defer(device.id, 1);
+      })
+    }
   }
 
   addDevice(device, cb) {
