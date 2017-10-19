@@ -45,6 +45,7 @@ class DeviceStore {
     if (data.device_id in this.devices) {
       if (this.devices.hasOwnProperty(data.device_id)) {
         this.devices[data.device_id].position = data.position;
+        this.devices[data.device_id].sinr = data.sinr;
       }
     }
   }
