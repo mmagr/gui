@@ -40,12 +40,15 @@ class PositionRenderer extends Component {
       layerLoaded: false,
       visible: false,
       selected_device_id : -1,
+      isTerrain: false,
     }
 
     this._handleClick = this._handleClick.bind(this);
     this._handleMoveStart = this._handleMoveStart.bind(this);
     this._handleContextMenu = this._handleContextMenu.bind(this);
     this._handleTracking = this._handleTracking.bind(this);
+
+    this.setTiles = this.setTiles.bind(this);
   }
 
   _handleTracking() {
@@ -104,6 +107,10 @@ class PositionRenderer extends Component {
     }
   }
 
+  setTiles(isMap) {
+    this.setState({isTerrain: isMap});
+  }
+
   render() {
     function NoData() {
       return (
@@ -143,21 +150,29 @@ class PositionRenderer extends Component {
           <div className="contextMenu--option">State : </div>
           <div className="contextMenu--separator" />
           <Link to={"/device/id/" + this.state.selected_device_id + "/detail"} title="View details">
-          <div className="contextMenu--option"><i className="fa fa-fa-info-circle" />Details</div>
+            <div className="contextMenu--option"><i className="fa fa-fa-info-circle" />Details</div>
           </Link>
           <div className="contextMenu--option"  onClick={this._handleTracking}><i className="fa fa-compass" />Tracking</div>
       </div>
     ) : null
 
     return (
-        <Map center={[22,22]} zoom={13} ref={m => {this.leafletMap = m;}}   onContextMenu={this._handleClick}  onMoveStart={this._handleMoveStart}>
+      <Map center={parsedEntries[0].pos} zoom={13} ref={m => {this.leafletMap = m;}}   onContextMenu={this._handleClick}  onMoveStart={this._handleMoveStart}>
         <LayerBox> </LayerBox>
         {contextMenu}
         <ReactResizeDetector handleWidth onResize={this.resize.bind(this)} />
-        <TileLayer
-          url='https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2ZyYW5jaXNjbyIsImEiOiJjajhrN3VlYmowYXNpMndzN2o2OWY1MGEwIn0.xPCJwpMTrID9uOgPGK8ntg'
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors'
-        />
+        <div className="mapOptions col s12">
+          <div className="mapView" onClick = {() => this.setTiles(true)}>Terrain</div>
+          <div className="satelliteView" onClick = {() => this.setTiles(false)}>Satellite</div>
+        </div>
+        {this.state.isTerrain ? (
+          <TileLayer url = 'https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2ZyYW5jaXNjbyIsImEiOiJjajhrN3VlYmowYXNpMndzN2o2OWY1MGEwIn0.xPCJwpMTrID9uOgPGK8ntg'
+          attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors'/>
+        ) : (
+          <TileLayer url = 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZm1lc3NpYXMiLCJhIjoiY2o4dnZ1ZHdhMWg5azMycDhncjdqMTg1eiJ9.Y75W4n6dTd9DOpctpizPrQ'
+          attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors' />
+        )}
+
         {parsedEntries.map((k) => (
           <Marker
            onContextMenu={(e) => { this._handleContextMenu(e, k.id); }}
@@ -211,7 +226,8 @@ class LayerBox extends Component {
         [-20.90974,-48.83651],
         [-21.80963,-47.11802]
     ]);
-    const layerOpacity = 0.7;
+
+    const layerOpacity = 0.3;
     const imageoverlay = this.state.visible ? (
       <ImageOverlay
         opacity={layerOpacity}
