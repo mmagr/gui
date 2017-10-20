@@ -36,11 +36,6 @@ class MeasureActions {
 
 
   fetchPosition(device_id, history_length) {
-    // function callback(data) {
-    //   let position = [data.lat[0].value, data.lng[0].value];
-    //   this.updatePosition(device_id, position);
-    // }
-    // return this.fetchMeasures(device_id, ['lat', 'lng'], history_length, callback);
     const attrs = ['lat', 'lng', 'sinr', 'rssi'];
     function getUrl() {
       if (history_length === undefined) { history_length = 1; }
@@ -73,10 +68,7 @@ class MeasureActions {
         .catch((error) => {console.error("failed to fetch data", error);});
     }
   }
-
-  updatePosition(data) {
-    return data;
-  }
+  updatePosition(data) {return data;}
 
   fetchMeasures(device, type, attr) {
 

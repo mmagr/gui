@@ -66,10 +66,11 @@ class Devices extends Component {
         transitionEnterTimeout={500} transitionLeaveTimeout={500} >
         <AltContainer store={DeviceStore}>
           {/* Devices prop comes from DeviceStore, through AltContainer */}
-          { this.state.displayList ?
-            (<DeviceList toggle={displayToggle} />) :
-            (<DeviceMap toggle={displayToggle} />)
-          }
+          { this.state.displayList ? (
+            <DeviceList toggle={displayToggle} />
+          ) : (
+            <DeviceMap toggle={displayToggle} />
+          )}
         </AltContainer>
       </ReactCSSTransitionGroup>
     );

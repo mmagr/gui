@@ -1,10 +1,12 @@
 var alt = require('../alt');
 var DeviceActions = require('../actions/DeviceActions');
 var MeasureActions = require('../actions/MeasureActions');
+var TrackingActions = require('../actions/TrackingActions');
 
 class DeviceStore {
   constructor() {
     this.devices = {};
+    this.tracking = {};
     this.error = null;
     this.loading = false;
 
@@ -24,8 +26,23 @@ class DeviceStore {
       handleFailure: DeviceActions.DEVICES_FAILED,
 
       handleFetchPosition: MeasureActions.FETCH_POSITION,
-      handleUpdatePosition: MeasureActions.UPDATE_POSITION
+      handleUpdatePosition: MeasureActions.UPDATE_POSITION,
+
+      handleTrackingFetch: TrackingActions.FETCH,
+      handleTrackingSet: TrackingActions.SET,
+      handleTrackingDismiss: TrackingActions.DISMISS
     });
+  }
+
+  handleTrackingFetch(){}
+  handleTrackingSet(history){
+    this.tracking[history.device_id] = history.data;
+  }
+
+  handleTrackingDismiss(device_id){
+    if (this.tracking.hasOwnProperty(device_id)){
+      delete this.tracking[device_id];
+    }
   }
 
   parseStatus(device) {
