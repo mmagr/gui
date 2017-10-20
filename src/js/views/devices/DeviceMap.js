@@ -124,7 +124,31 @@ class PositionRenderer extends Component {
     }
 
     function getPinColor(p) {
-      return darkBluePin;
+      if(p.sinr > 20){
+        return darkBluePin;
+      } else{
+        if(p.sinr > 15){
+          return lightBluePin;
+        } else {
+          if(p.sinr > 10){
+            return greyishBluePin;
+          } else {
+            if(p.sinr > 5){
+              return bluePin;
+            } else {
+              if(p.sinr > 2){
+                return orangePin;
+              } else {
+                if(p.sinr > -1){
+                  return redPin;
+                } else {
+                  return blackPin;
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     let parsedEntries = this.props.devices.reduce((result, k) => {
