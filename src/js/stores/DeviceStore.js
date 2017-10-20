@@ -44,8 +44,11 @@ class DeviceStore {
   handleUpdatePosition(data) {
     if (data.device_id in this.devices) {
       if (this.devices.hasOwnProperty(data.device_id)) {
-        this.devices[data.device_id].position = data.position;
-        this.devices[data.device_id].sinr = data.sinr;
+        for (let k in data) {
+          if ((k != "device_id") && (data.hasOwnProperty(k))) {
+            this.devices[data.device_id][k] = data[k];
+          }
+        }
       }
     }
   }

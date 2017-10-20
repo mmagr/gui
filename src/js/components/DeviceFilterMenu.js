@@ -22,17 +22,18 @@ class ListItem extends Component {
   render() {
     let showOrHideDevice = this.state.click ? "fa fa-eye" : "fa fa-eye-slash";
     const name = this.props.device.label;
+    const attrValue = this.props.device.rssi ? this.props.device.rssi : "unknown"
 
     return (
-          <div className="lst-entry-title col s12" id={this.props.device.id} title="See details">
-            <div className="img col s3" id="img-chip">
-              <img src="images/chip.png" />
-            </div>
-              <div className="user-label truncate col s6">{name}</div>
-              <div className="label col s6">RSSI 70%</div> {/*Fixed RSSI*/}
-              <div className="col s3 img" id="device-view">
-                <a className="" onClick={this.hideDevice}><i className={showOrHideDevice} aria-hidden="true"></i></a>
-          </div>
+      <div className="lst-entry-title col s12" id={this.props.device.id} title="See details">
+        <div className="img col s3" id="img-chip">
+          <img src="images/chip.png" />
+        </div>
+        <div className="user-label truncate col s6">{name}</div>
+        <div className="label col s6">RSSI {attrValue}</div>
+        <div className="col s3 img" id="device-view">
+          <a className="" onClick={this.hideDevice}><i className={showOrHideDevice} aria-hidden="true"></i></a>
+        </div>
       </div>
     )
   }
@@ -123,7 +124,6 @@ class List extends Component {
     this.applyFiltering = this.applyFiltering.bind(this);
     this.hideDevices = this.hideDevices.bind(this);
     this.showDevices = this.showDevices.bind(this);
-    this.filterSidebar = this.filterSidebar.bind(this);
   }
 
   // TODO that should be done by the backend, not here.
@@ -148,20 +148,14 @@ class List extends Component {
 
   hideDevices(event){
     if (this.state.hide === false) {
-         this.setState({hide: !this.state.hide});
-     }
+      this.setState({hide: !this.state.hide});
+    }
   }
 
   showDevices(event){
-        if (this.state.hide === true) {
-             this.setState({hide: !this.state.hide});
-         }
-  }
-
-  // TODO this belongs to parent component
-  filterSidebar(event){
-    this.props.callback(this.state.changeSidebar);
-    console.log("Filter");
+    if (this.state.hide === true) {
+      this.setState({hide: !this.state.hide});
+    }
   }
 
   render(){
@@ -171,30 +165,28 @@ class List extends Component {
     const showCanvas = 'deviceCanvas col s12 ' + hide;
     return (
       <span className="list-of-devices">
-      <div className="row device-list">
-      <div className="col s12 main-title center-align">Devices</div>
-      <div className="col s12 info-header">
-        <div className= "col s1 subtitle">{filteredList.length}</div>
-        <div className= "col s5 title">Devices</div>
-        <div className="col s6 device-list-actions">
-          <div className="col s6 action-hide"><a className="waves-effect waves-light" onClick={this.hideDevices}>HIDE ALL</a></div>
-          <div className="col s6 action-show"><a className="waves-effect waves-light" onClick={this.showDevices}>SHOW ALL</a></div>
+        <div className="row device-list">
+          <div className="col s12 main-title center-align">Devices</div>
+          <div className="col s12 info-header">
+            <div className= "col s1 subtitle">{filteredList.length}</div>
+            <div className= "col s5 title">Devices</div>
+            <div className="col s6 device-list-actions">
+              <div className="col s6 action-hide">
+                <a className="waves-effect waves-light" onClick={this.hideDevices}>HIDE ALL</a>
+              </div>
+              <div className="col s6 action-show">
+                <a className="waves-effect waves-light" onClick={this.showDevices}>SHOW ALL</a>
+              </div>
+            </div>
+          </div>
+          <div className={showCanvas}>
+            {(filteredList.length > 0) ? (
+              <ListRender devices={filteredList} loading={this.props.loading} deviceid={this.props.deviceid} />
+            ) : (
+              <div className="col s12 background-info">No configured devices</div>
+            )}
+          </div>
         </div>
-      </div>
-      <div className={showCanvas}>
-        {(filteredList.length > 0) ? (
-          <ListRender devices={filteredList} loading={this.props.loading} deviceid={this.props.deviceid} />
-        ) : (
-          <div className="col s12 background-info">No configured devices</div>
-        )}
-      </div>
-      </div>
-
-      <div className="device-footer col s12">
-        <div className="col s12 background-info">
-        <a className="waves-effect waves-light" onClick={this.filterSidebar}>FILTERING</a>
-      </div>
-      </div>
       </span>
     )
   }
@@ -392,9 +384,9 @@ class Filter extends Component {
                </form>
              </div>
 
-             <div className="col s12 background-info" onClick={this.devicesSidebar}>
+             {/* <div className="col s12 background-info" onClick={this.devicesSidebar}>
                <a className="waves-effect waves-light">DEVICES</a>
-             </div>
+             </div> */}
 
            </div>
       )
@@ -404,8 +396,12 @@ class Filter extends Component {
 class SideBar extends Component {
   constructor(props){
     super(props);
-    this.state = {click: null,
-      sideBarOpened: false}
+    this.state = {
+      click: false,
+      nextKey: "filtering",
+      sideBarOpened: false
+    };
+
     this.toggleSideBar = this.toggleSideBar.bind(this);
     this.changeSideBar = this.changeSideBar.bind(this);
   }
@@ -416,38 +412,49 @@ class SideBar extends Component {
     this.setState({sideBarOpened: !last});
   }
 
-  changeSideBar(callback){
-    if(callback){
-      this.setState({click: this.setState.click});
-    } else {
-      this.setState({click: !this.setState.click});
-    }
-
+  changeSideBar(e) {
+    e.preventDefault();
+    this.setState({
+      click: !this.state.click,
+      nextKey: (this.state.click ? "filtering" : "devices")
+    });
   }
 
   render(){
-
-    const btnSideBar = this.state.sideBarOpened ? (
-      <button type="button" className='btn btn-circle sideBarToggle' onClick={this.toggleSideBar}>
-      <i className="fa fa-chevron-right" aria-hidden="true"></i>
-      </button> ) : (
-      <button type="button" className='btn btn-circle sideBarToggle' onClick={this.toggleSideBar}>
-        <i className="fa fa-chevron-left" aria-hidden="true"></i>
-      </button> )
-      const divFilterList =  this.state.click ? (<Filter devices={this.props.devices} callback={this.changeSideBar}/>)
-      : (<List devices={this.props.devices} callback={this.changeSideBar}/>);
-
+    function Footer(props) {
       return (
-<div className="col m12">
-        <div className={"col m12 div-btn-side-painel " + (this.state.sideBarOpened ? 'push-left' : 'no-left')}>
-        {btnSideBar}
+        <div className="device-footer">
+          <div className="col s12 background-info" onClick={props.callback}>
+            <a className="waves-effect waves-light">{props.nextKey.toUpperCase()}</a>
+          </div>
         </div>
-        { this.state.sideBarOpened ?
-            (<div className="col devicePainel full-height">
+      )
+    }
+
+    const btnSideBarClass = "fa fa-chevron-" + (this.state.sideBarOpened ? "right" : "left");
+    const divFilterList =  this.state.click ? (
+      <Filter devices={this.props.devices} callback={this.changeSideBar}/>
+    ) : (
+      <List devices={this.props.devices} callback={this.changeSideBar}/>
+    );
+
+    return (
+      <div className="col m12">
+        <div className={"col m12 div-btn-side-painel " + (this.state.sideBarOpened ? 'push-left' : 'no-left')}>
+          <button type="button" className='btn btn-circle sideBarToggle' onClick={this.toggleSideBar}>
+            <i className={btnSideBarClass} aria-hidden="true"></i>
+          </button>
+        </div>
+        { this.state.sideBarOpened ? (
+          <div className="col devicePainel full-height">
             {divFilterList}
-            </div>) : null }
-            </div>
-        )
+            <Footer callback={this.changeSideBar} nextKey={this.state.nextKey} />
+          </div>
+        ) : (
+          null
+        )}
+      </div>
+    )
   }
 }
 

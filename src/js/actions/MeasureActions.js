@@ -41,7 +41,7 @@ class MeasureActions {
     //   this.updatePosition(device_id, position);
     // }
     // return this.fetchMeasures(device_id, ['lat', 'lng'], history_length, callback);
-    const attrs = ['lat', 'lng', 'sinr'];
+    const attrs = ['lat', 'lng', 'sinr', 'rssi'];
     function getUrl() {
       if (history_length === undefined) { history_length = 1; }
       let url = '/history/device/' + device_id + '/history' + '?lastN=' + history_length;
@@ -54,26 +54,28 @@ class MeasureActions {
       // console.log("should fetch " + getUrl());
       util._runFetch(getUrl(), {method: 'get'})
         .then((reply) => {
-          let position = undefined;
-          let sinr = undefined;
+          let data = {device_id: device_id};
           if ((reply.lat.length > 0) && (reply.lng.length > 0)) {
             if (reply.lat[0].value !== "nan" && reply.lng[0].value !== "nan") {
-              position = [parseFloat(reply.lat[0].value), parseFloat(reply.lng[0].value)];
+              data.position = [parseFloat(reply.lat[0].value), parseFloat(reply.lng[0].value)];
             }
           }
 
           if (reply.sinr.length > 0) {
-            sinr = parseFloat(reply.sinr[0].value)
+            data.sinr = parseFloat(reply.sinr[0].value)
+          }
+          if (reply.rssi.length > 0) {
+            data.rssi = parseFloat(reply.rssi[0].value)
           }
 
-          this.updatePosition(device_id, position, sinr);
+          this.updatePosition(data);
         })
         .catch((error) => {console.error("failed to fetch data", error);});
     }
   }
 
-  updatePosition(device_id, position, sinr) {
-    return {device_id: device_id, position: position, sinr: sinr};
+  updatePosition(data) {
+    return data;
   }
 
   fetchMeasures(device, type, attr) {

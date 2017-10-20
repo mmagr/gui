@@ -806,8 +806,7 @@ $action-area-width: 200px;
 }
 
 .deviceMapCanvas {
-  // height: calc(100% - 65px);
-   height: 100%;
+   height: calc(100% - 65px);
    width: 100%;
    background-color: $light-gray;
 
