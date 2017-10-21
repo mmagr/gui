@@ -351,9 +351,15 @@ class AttributeBox extends Component {
       <div className="col s12 p0 full-height">
         <div className="col s5 card-box">
           <div className="detail-box-header">Attributes</div>
-          {this.props.attrs.map((attr) => (
-            <AttributeSelector label={attr} currentValue="" key={attr} />
-          ))}
+          {this.props.attrs.map((attr) => {
+            let data = undefined;
+            if (this.props.data && this.props.data.hasOwnProperty('data')) {
+              // console.log(this.props.data.data[attr][0]);
+              data = this.props.data.data[attr][0].value;
+            }
+            return (
+              <AttributeSelector label={attr} key={attr} currentValue={data}/>
+          )})}
         </div>
         <div className="col s7 graph-box">
           <div className='col s12 legend'>Showing 1 Hour From 10:23 to 11:23 10/13/2017</div>
@@ -372,13 +378,13 @@ class DeviceDetail extends Component {
     this.state = {
       new_attr: null,
       selected_attributes: [
-        "RSSI",
-        "SNR",
-        "Altitude",
-        "RPM",
-        "Oil Temperature",
-        "Fuel level",
-        "Ground speed"
+        "rssi",
+        "sinr",
+        "alt",
+        "rpm",
+        "oilTemperature",
+        "fuelLevel",
+        "speed"
       ]
     };
     this.handleSelectedAttribute = this.handleSelectedAttribute.bind(this);
@@ -405,6 +411,10 @@ class DeviceDetail extends Component {
   handleClear(event) {
     event.preventDefault();
     this.setState({selected_attributes:[]});
+  }
+
+  componentDidMount() {
+    MeasureActions.fetchMeasure.defer(this.props.deviceid,this.state.selected_attributes,1);
   }
 
   render() {
@@ -441,7 +451,10 @@ class DeviceDetail extends Component {
           </div>
           <div className="row attribute-box">
             <div className="row attribute-header">All Attributes</div>
-            <span className="highlight"> Showing <b>12</b> of <b>32</b> attributes</span>
+            <span className="highlight">
+              Showing <b>{this.state.selected_attributes.length}</b>
+              of <b>{device.attrs.length}</b> attributes
+            </span>
             <div className="col s12 p16">
               <div className="input-field col s12">
                 <MaterialSelect id="attributes-select" name="attribute"

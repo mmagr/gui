@@ -4,16 +4,11 @@ import LoginStore from '../stores/LoginStore';
 var alt = require('../alt');
 import util from '../comms/util';
 
-
-
-
 class MeasureActions {
 
-  updateMeasures(device, attr, data) {
-    return {device: device, attr: attr, data: data};
-  }
-
+  updateMeasures(data) { return data; }
   fetchMeasure(device_id, attrs, history_length, callback) {
+    console.log('will fetch data for', device_id, attrs);
     function getUrl() {
       if (history_length === undefined) { history_length = 1; }
       let url = '/history/device/' + device_id + '/history' + '?lastN=' + history_length;
@@ -23,18 +18,17 @@ class MeasureActions {
 
     return (dispatch) => {
       dispatch();
-      // console.log("should fetch " + getUrl());
       util._runFetch(getUrl(), {method: 'get'})
         .then((reply) => {
+          const data = {device: device_id, data: reply};
+          this.updateMeasures(data);
           if (callback) {callback(reply)}
-          // const data = reply.contextResponses[0].contextElement.attributes[0].values;
-          // this.updateMeasures(device, attr, data);
         })
         .catch((error) => {console.error("failed to fetch data", error);});
     }
   }
 
-
+  updatePosition(data) {return data;}
   fetchPosition(device_id, history_length) {
     const attrs = ['lat', 'lng', 'sinr', 'rssi'];
     function getUrl() {
@@ -64,38 +58,6 @@ class MeasureActions {
           }
 
           this.updatePosition(data);
-        })
-        .catch((error) => {console.error("failed to fetch data", error);});
-    }
-  }
-  updatePosition(data) {return data;}
-
-  fetchMeasures(device, type, attr) {
-
-    let devType = 'device';
-    if (type == "virtual") {
-      devType = "virtual";
-    }
-
-    function getUrl() {
-      return '/history/STH/v1/contextEntities/type/' + devType + '/id/' + device + '/attributes/' + attr.name + '?lastN=10'
-    }
-
-    return (dispatch) => {
-      dispatch({device: device, attr: attr});
-
-      const service = LoginStore.getState().user.service;
-      const config = {
-        method: 'get',
-        headers: new Headers({
-          'fiware-service': service,
-          'fiware-servicepath': '/'
-        })
-      }
-      util._runFetch(getUrl(), config)
-        .then((reply) => {
-          const data = reply.contextResponses[0].contextElement.attributes[0].values;
-          this.updateMeasures(device, attr, data);
         })
         .catch((error) => {console.error("failed to fetch data", error);});
     }
