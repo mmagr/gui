@@ -113,6 +113,10 @@ class PositionRenderer extends Component {
     }
 
     function getPinColor(p) {
+      if (p.sinr === undefined) {
+        return darkBluePin;
+      }
+
       if(p.sinr > 20){
         return darkBluePin;
       }
@@ -199,16 +203,18 @@ class PositionRenderer extends Component {
           <div className="satelliteView" onClick = {() => this.setTiles(false)}>Satellite</div>
         </div>
         <TileLayer url={tileURL} attribution={attribution} />
-        {parsedEntries.map((k) => (
-          <Marker
-            onContextMenu={(e) => { this._handleContextMenu(e, k.id); }}
-            onClick={(e) => { this._handleContextMenu(e, k.id); }}
-            position={k.pos} key={k.key} icon={k.pin}  >
-            <Tooltip>
-              <span>{k.id }: {k.name}</span>
-            </Tooltip>
-          </Marker>
-        ))}
+        {parsedEntries.map((k) => {
+          console.log(k);
+          return (
+            <Marker
+              onContextMenu={(e) => { this._handleContextMenu(e, k.id); }}
+              onClick={(e) => { this._handleContextMenu(e, k.id); }}
+              position={k.pos} key={k.key} icon={k.pin}  >
+              <Tooltip>
+                <span>{k.id }: {k.name}</span>
+              </Tooltip>
+            </Marker>
+        )})}
       </Map>
     )
   }
