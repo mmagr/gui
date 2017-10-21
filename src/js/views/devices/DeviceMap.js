@@ -146,8 +146,8 @@ class PositionRenderer extends Component {
       }
     }
 
-
     let parsedEntries = this.props.devices.reduce((result, k) => {
+      console.log('parsing', k);
       if ((k.position !== undefined) && (!k.hide)) {
         result.push({
           id:k.id,
@@ -346,4 +346,4 @@ class DeviceMap extends Component {
   }
 }
 
-export { DeviceMap };
+export { DeviceMap, PositionRenderer };

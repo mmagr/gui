@@ -41,11 +41,10 @@
     }
 }
 
-.graph-box
-{
+.graph-box {
   box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.25);
   background: #EDEDED;
-  height: 350px;
+  height: 100%;
 
   .legend
   {
@@ -60,11 +59,10 @@
   }
 }
 
-.card-box
-{
+.card-box {
   background: #FAFAFA;
   box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.25);
-  height: 350px;
+  height: 100%;
   padding: 0px !important;
   overflow: auto;
 
@@ -116,8 +114,7 @@
   }
 }
 
-.attribute-box
-{
+.attribute-box {
   padding-top: 44px;
   padding-left: 21px;
 
@@ -166,10 +163,18 @@
     text-align: right;
 }
 
+.detail-body {
+  height: calc(100% - 65px);
+  margin: 0 !important;
+  position: relative;
+}
 
-.detail-box
-{
-  height:750px;
+.data-box {
+  height: calc(100% - 400px);
+}
+
+.detail-box {
+  // height:750px;
   background: #FAFAFA;
   box-shadow: 4px 0 6px rgba(0, 0, 0, 0.25);
   margin-top: -10px;
@@ -188,29 +193,24 @@
       text-align: right;
   }
 
-  .detail-box-body
-  {
+  .detail-box-body{}
 
-  }
-
-  .metric
-  {
+  .metric {
     text-transform: uppercase;
     padding: 7px 7px 7px 39px;
 
-    span{
+    span {
       display: block;
     }
 
-    .label{
+    .label {
       font-family: 'Open Sans', 'Roboto', sans-serif;
       font-size: 12px;
       letter-spacing: 0.42px;
       color: #4F4F4F;
     }
 
-    .value
-    {
+    .value {
       font-family: 'Open Sans', 'Roboto', sans-serif;
       font-weight: bold;
       font-size: 13px;

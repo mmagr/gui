@@ -25,7 +25,7 @@ class DeviceActions {
 
       deviceManager.getDevice(deviceid)
         .then((device) => {
-          this.updateSingle(device);
+          this.updateDevices([device]);
           if (cb) {
             cb(device);
           }
@@ -52,6 +52,7 @@ class DeviceActions {
       }
 
       list.map((device) => {
+        console.log('will read data for device', device.id);
         MeasureActions.fetchPosition.defer(device.id, 1);
       })
     }
@@ -92,10 +93,6 @@ class DeviceActions {
           this.devicesFailed("Failed to update given device");
         })
     }
-  }
-
-  updateSingle(device) {
-    return device;
   }
 
   triggerRemoval(device, cb) {

@@ -18,7 +18,6 @@ class DeviceStore {
       handleTriggerInsertion: DeviceActions.ADD_DEVICE,
 
       handleTriggerUpdate: DeviceActions.TRIGGER_UPDATE,
-      handleUpdateSingle: DeviceActions.UPDATE_SINGLE,
 
       handleTriggerRemoval: DeviceActions.TRIGGER_REMOVAL,
       handleRemoveSingle: DeviceActions.REMOVE_SINGLE,

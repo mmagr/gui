@@ -16,11 +16,11 @@ import DeviceStore from '../../stores/DeviceStore';
 import deviceManager from '../../comms/devices/DeviceManager';
 import util from "../../comms/util/util";
 import {SubHeader, SubHeaderItem} from "../../components/SubHeader";
+import {Loading} from "../../components/Loading";
 
 import { Line } from 'react-chartjs-2';
-import { Map, Marker, Popup, TileLayer, Tooltip } from 'react-leaflet';
+import { PositionRenderer } from './DeviceMap.js'
 import MaterialSelect from "../../components/MaterialSelect";
-import { divIcon } from 'leaflet';
 
 // TODO make this its own component
 class RemoveDialog extends Component {
@@ -190,66 +190,6 @@ class Graph extends Component{
 }
 
 // TODO move this to its own component
-class PositionRenderer extends Component {
-  render() {
-    function NoData() {
-      return (
-        <div className="full-height valign-wrapper background-info subtle relative graph">
-          <div className="horizontal-center">
-            <i className="material-icons">report_problem</i>
-            <div>No position data available</div>
-          </div>
-        </div>
-      )
-    }
-
-    if ((this.props.value === undefined) || (this.props.value.attrValue == null)) {
-      return (<NoData />);
-    }
-
-    let pos = this.props.value.attrValue;
-    let parsed = pos.match(/^([+-]?\d+(\.\d+)?)\s*[,]\s*([+-]?\d+(\.\d+)?)$/)
-
-    if (parsed == null) {
-      return (<NoData />)
-    }
-
-    const position = [parseFloat(parsed[1]),parseFloat(parsed[3])];
-
-    return (
-      <div className="map full-height">
-        <Map center={position} zoom={19}>
-          <TileLayer
-            url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <Marker position={position}></Marker>
-        </Map>
-      </div>
-    )
-  }
-}
-
-// TODO move this to its own component
-class Position extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render () {
-    let value = undefined;
-
-    if (this.props.data.length > 0) {
-      value = this.props.data[this.props.data.length - 1];
-    }
-
-    return (
-      <PositionRenderer deviceId={this.props.device.id} value={value}/>
-    )
-  }
-}
-
-// TODO move this to its own component
 function HistoryList(props) {
   let trimmedList = props.data.filter((i) => {
     return i.attrValue.trim().length > 0
@@ -413,7 +353,7 @@ class AttributeBox extends Component {
     // if (this.props.deviceid == null || !this.props.devices.hasOwnProperty(this.props.deviceid)) {
     //   console.error('Failed to load device attribute data', this.props.deviceid, this.props.devices);
       return (
-        <div className="col s12 p0">
+        <div className="col s12 p0 full-height">
             <div className="col s5 card-box">
                 <div className="detail-box-header">
                     Attributes
@@ -466,7 +406,6 @@ class DeviceDetail extends Component {
     super(props);
     this.state = {selected_attribute: ''};
     this.handleSelectedAttribute = this.handleSelectedAttribute.bind(this);
-
   }
 
   handleSelectedAttribute() {
@@ -475,143 +414,121 @@ class DeviceDetail extends Component {
 
 
   render() {
-    if (this.props.deviceid == null || !this.props.devices.hasOwnProperty(this.props.deviceid)) {
-      console.error('Failed to load device attribute data', this.props.deviceid, this.props.devices);
-      return (
-        //  TODO This appears so many times it might be worth making it a component on its own
-        <div className="background-info valign-wrapper full-height relative bg-gray">
-          <i className="fa fa-circle-o-notch fa-spin fa-fw horizontal-center"/>
-        </div>
-      )
-    }
-
     const device = this.props.devices[this.props.deviceid];
-    if (device.loading) {
-      return (
-        //  TODO This appears so many times it might be worth making it a component on its own
-        <div className="background-info valign-wrapper full-height relative bg-gray">
-          <i className="fa fa-circle-o-notch fa-spin fa-fw horizontal-center"/>
-        </div>
-      )
-    }
-
-    let position = null;
-    function getPosition(i) {
-      if (i.type == "geo:point") {
-        position = i;
-      }
-    }
-    device.static_attrs.map((i) => {getPosition(i)})
-    if (position === null) {
-      device.attrs.map((i) => {getPosition(i)})
-    }
-
     return (
-      <div className={ "row col s12 auto-height "}>
-          <div className="col s3 detail-box">
-                  <div className="detail-box-header">
-                      General
-                  </div>
-                <div className="detail-box-body">
-                      <div className="metric">
-                          <span className="label">Attributes</span>
-                          <span className="value">{device.attrs.length + device.static_attrs.length}</span>
-                      </div>
-                      <div className="metric">
-                          <span className="label">Last update</span>
-                          <span className="value">{util.printTime(device.updated)}</span>
-                      </div>
-                      <div className="metric">
-                          <span className="label">Status</span>
-                          <span className="value">{device._status}</span>
-                      </div>
-                      <div className="metric">
-                          <span className="label">Protocol</span>
-                          <span className="value">{device.protocol ? device.protocol : "MQTT"}</span>
-                      </div>
-                  </div>
-              <div className="row attribute-box">
-                  <div className="row attribute-header">All Attributes
-                  </div>
-                  <span className="highlight"> Showing <b>12</b> of <b>32</b> attributes
-                  </span>
-                  <div className="col s12 p16">
-                      <div className="input-field col s5">
-                      {
-                      //  <MaterialSelect id="attributes-select" name="attribute" value={this.state.selected_attribute}
-                      //        onChange={this.handleSelectedAttribute}>
-                      //   <option value="Temperature">Temperature</option>
-                      //   <option value="RPM">RPM</option>
-                      //   <option value="Track">Track</option>
-                      //   <option value="Speed">Speed</option>
-                      //   <option value="Coordinates">Coordinates</option>
-                      // </MaterialSelect>
-                    }
-                      </div>
-                      <div className="col s12 actions-buttons">
-                          <div className="col s6 button ta-center">
-                              <a className="waves-effect waves-light btn btn-light" id="btn-clear" tabIndex="-1" title="Clear" onClick={this.clearList}>
-                            Clear
-                          </a>
-                          </div>
-                          <div className="col s6 button" type="submit">
-                              <a className="waves-effect waves-light btn" id="btn-add" tabIndex="-1" title="Add">
-                                <i className="clickable fa fa-plus"/>
-                              </a>
-                          </div>
-                      </div>
-                      <div className="box-list">
-                      </div>
-                  </div>
+      <div className="row detail-body">
+        <div className="col s3 detail-box full-height">
+          <div className="detail-box-header">General</div>
+          <div className="detail-box-body">
+            <div className="metric">
+                <span className="label">Attributes</span>
+                <span className="value">{device.attrs.length + device.static_attrs.length}</span>
+            </div>
+            <div className="metric">
+                <span className="label">Last update</span>
+                <span className="value">{util.printTime(device.updated)}</span>
+            </div>
+            <div className="metric">
+                <span className="label">Status</span>
+                <span className="value">{device._status}</span>
+            </div>
+            <div className="metric">
+                <span className="label">Protocol</span>
+                <span className="value">{device.protocol ? device.protocol : "MQTT"}</span>
+            </div>
+          </div>
+          <div className="row attribute-box">
+            <div className="row attribute-header">All Attributes</div>
+            <span className="highlight"> Showing <b>12</b> of <b>32</b> attributes</span>
+            <div className="col s12 p16">
+              <div className="input-field col s5">
+              {
+              //  <MaterialSelect id="attributes-select" name="attribute" value={this.state.selected_attribute}
+              //        onChange={this.handleSelectedAttribute}>
+              //   <option value="Temperature">Temperature</option>
+              //   <option value="RPM">RPM</option>
+              //   <option value="Track">Track</option>
+              //   <option value="Speed">Speed</option>
+              //   <option value="Coordinates">Coordinates</option>
+              // </MaterialSelect>
+              }
               </div>
+              <div className="col s12 actions-buttons">
+                <div className="col s6 button ta-center">
+                  <a className="waves-effect waves-light btn btn-light" id="btn-clear" tabIndex="-1"
+                     title="Clear" onClick={this.clearList}>
+                    Clear
+                  </a>
+                </div>
+                <div className="col s6 button" type="submit">
+                  <a className="waves-effect waves-light btn" id="btn-add" tabIndex="-1" title="Add">
+                    <i className="clickable fa fa-plus"/>
+                  </a>
+                </div>
+              </div>
+              <div className="box-list"></div>
             </div>
-            <div className="col s9 device-map">
-                    <div className="col s12 device-map-box">
-                        <MapLocation />
-                    </div>
-                    <div className="col s12 p0">
-                    <AltContainer store={MeasureStore} inject={{device: device}}>
-                        <AttributeBox />
-                    </AltContainer>
-                    </div>
-            </div>
+          </div>
         </div>
-      )
-  }
-}
-
-class MapLocation extends Component {
-  constructor(props) {
-    super(props);
-    // this.remove = this.remove.bind(this);
-  }
-
-  render() {
-    let title = "View device";
-    var darkBluePin = L.divIcon({className: 'icon-marker bg-dark-blue'});
-    const mkr = {id:'id', pos:[21,22], pin:darkBluePin, name: 'k.label'};
-    const position = [21,22];
-
-    return (
-      <div className="map full-height">
-        <Map center={position} zoom={19}>
-          <TileLayer
-            url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <Marker
-           position={mkr.pos} key={mkr.id} icon={mkr.pin}  >
-          <Tooltip>
-            <span>
-             {mkr.id }: {mkr.name}
-            </span>
-          </Tooltip>
-          </Marker>
-        </Map>
+        <div className="col s9 device-map full-height">
+          <div className="col s12 device-map-box">
+            <PositionRenderer devices={[device]}/>
+          </div>
+          <div className="col s12 p0 data-box full-height">
+            <AltContainer store={MeasureStore} inject={{device: device}}>
+              <AttributeBox />
+            </AltContainer>
+          </div>
+        </div>
       </div>
     )
   }
 }
+
+function ConnectivityStatus(props) {
+  if (props.status == "online") {
+    return (
+      <span className='status-on-off clr-green'><i className="fa fa-info-circle" />Online</span>
+    )
+  } else {
+    return (
+      <span className='status-on-off clr-red'><i className="fa fa-info-circle" />Offline</span>
+    )
+  }
+}
+
+class ViewDeviceImpl extends Component {
+  render() {
+    let title = "View device";
+
+    let device = undefined;
+    if (this.props.devices !== undefined){
+      if (this.props.devices.hasOwnProperty(this.props.device_id)) {
+        device = this.props.devices[this.props.device_id];
+      }
+    }
+
+    if (device === undefined) {
+      return (<Loading />);
+    }
+
+    return (
+      <div className="full-height">
+        <SubHeader>
+          <SubHeaderItem text={"Viewing Device: "+ device.label } />
+          <div className="box-sh">
+            <DeviceUserActions deviceid={device.id} confirmTarget="confirmDiag"/>
+          </div>
+          <div className="box-sh">
+            <ConnectivityStatus status={device.status} />
+          </div>
+        </SubHeader>
+        <DeviceDetail deviceid={device.id} devices={this.props.devices}/>
+      </div>
+    )
+  }
+}
+
 class ViewDevice extends Component {
   constructor(props) {
     super(props);
@@ -620,31 +537,20 @@ class ViewDevice extends Component {
   }
 
   componentDidMount() {
-    function loadValues(device) {
-      device.attrs.map((i) => {
-        MeasureActions.fetchMeasures.defer(device.id, device.protocol, i);
-      })
-    }
-
-    DeviceActions.fetchSingle.defer(this.props.params.device, loadValues);
+    DeviceActions.fetchSingle.defer(this.props.params.device);
   }
 
   remove(e) {
     // This should be on DeviceUserActions -
     // this is not good, but will have to make do because of z-index on the action header
     e.preventDefault();
-    DeviceActions.triggerRemoval({id: this.props.params.device}, (device) => {
+      DeviceActions.triggerRemoval({id: this.props.params.device}, (device) => {
       hashHistory.push('/device/list');
       Materialize.toast('Device removed', 4000);
     });
   }
 
   render() {
-    let title = "View device";
-
-    const online_icon = (<span className='status-on-off clr-green'><i className="fa fa-info-circle" />Online</span>);
-    const offline_icon = (<span className='status-on-off clr-red'><i className="fa fa-info-circle" />Offline</span>);
-
     return (
       <div className="full-width full-height">
         <ReactCSSTransitionGroup
@@ -652,16 +558,7 @@ class ViewDevice extends Component {
           transitionAppear={true} transitionAppearTimeout={500}
           transitionEnterTimeout={500} transitionLeaveTimeout={500} >
           <AltContainer store={DeviceStore} >
-          <SubHeader>
-            <SubHeaderItem text={"Viewing Device: "+ this.props.params.device.label } />
-            <div className="box-sh">
-              <DeviceUserActions deviceid={this.props.params.device} confirmTarget="confirmDiag"/>
-            </div>
-            <div className="box-sh">
-              {online_icon}
-            </div>
-          </SubHeader>
-          <DeviceDetail deviceid={this.props.params.device}/>
+            <ViewDeviceImpl device_id={this.props.params.device}/>
           </AltContainer>
           <RemoveDialog callback={this.remove} target="confirmDiag" />
         </ReactCSSTransitionGroup>
