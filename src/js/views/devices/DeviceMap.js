@@ -144,7 +144,7 @@ class PositionRenderer extends Component {
 
 
     let parsedEntries = this.props.devices.reduce((result, k) => {
-      if (k.position !== undefined) {
+      if ((k.position !== undefined) && (!k.hide)) {
         result.push({
           id:k.id,
           pos:k.position,
@@ -256,28 +256,35 @@ class DeviceMap extends Component {
     super(props);
 
     this.state = {
-      tracking: {}
+      hide: {}
     }
 
     this.toggleTracking = this.toggleTracking.bind(this);
+    this.toggleDisplay = this.toggleDisplay.bind(this);
   }
 
   toggleTracking(device_id) {
-    let tracking = this.state.tracking;
-
-    if (!tracking.hasOwnProperty(device_id)) {
-      tracking[device_id] = true;
+    if (!this.props.tracking.hasOwnProperty(device_id)) {
       TrackingActions.fetch(device_id);
     } else {
-      delete tracking[device_id];
       TrackingActions.dismiss(device_id);
     }
+  }
 
-    this.setState({tracking: tracking});
+  toggleDisplay(device_id) {
+    console.log('will toggle display status', device_id);
+    let newHide = this.state.hide;
+    if (this.state.hide.hasOwnProperty(device_id)) {
+      delete newHide[device_id];
+    } else {
+      newHide[device_id] = true;
+    }
+    this.setState({hide: newHide});
   }
 
   render() {
     let validDevices = 0;
+    let validTracking = 0;
     let deviceList = [];
     let pointList = [];
     if ((this.props.devices !== undefined) && (this.props.devices !== null)) {
@@ -285,9 +292,9 @@ class DeviceMap extends Component {
         if (this.props.devices.hasOwnProperty(k)){
           let device = this.props.devices[k];
           device.hasPosition = device.hasOwnProperty('position');
-          deviceList.push(device);
-          pointList.push(device);
-          if (this.props.tracking.hasOwnProperty(k)) {
+          device.hide = this.state.hide.hasOwnProperty(device.id);
+          if (this.props.tracking.hasOwnProperty(k) && (!device.hide)) {
+            validTracking++;
             pointList = pointList.concat(this.props.tracking[k].map((e,k) => {
               let updated = e;
               updated.id = device.id;
@@ -299,6 +306,8 @@ class DeviceMap extends Component {
           if (device.hasPosition) {
             validDevices++;
           }
+          pointList.push(device);
+          deviceList.push(device);
         }
       }
     }
@@ -307,12 +316,13 @@ class DeviceMap extends Component {
     const location_icon  = (<img src='images/icons/location.png' />)
     const location_active_icon  = (<img src='images/icons/location_active.png' />)
 
-    let trackingText = "Tracking " + Object.keys(this.state.tracking).length + " devices";
-    if (this.state.tracking.length == 0) {
+    let trackingText = "Tracking " + validTracking + " devices";
+    if (validTracking == 0) {
       trackingText = "Tracking no devices";
     }
 
-    const displayText = "Showing " + validDevices + " of " + deviceList.length + " devices"
+    const displayText = "Showing " + validDevices + " of " +
+                        Object.keys(this.props.devices).length + " devices"
 
     return (
       <div className = "flex-wrapper">
@@ -323,7 +333,7 @@ class DeviceMap extends Component {
         </SubHeader>
         <div className="deviceMapCanvas col m12 s12 relative">
           <PositionRenderer devices={pointList} toggleTracking={this.toggleTracking}/>
-          <SideBar devices={this.props.devices} />
+          <SideBar devices={deviceList} statusMap={this.state.hide} toggleDisplay={this.toggleDisplay}/>
         </div>
       </div>
     )

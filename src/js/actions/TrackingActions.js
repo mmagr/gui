@@ -5,7 +5,7 @@ class TrackingActions {
   fetch(device_id, history_length) {
     const attrs = ['lat', 'lng'];
     function getUrl() {
-      if (history_length === undefined) { history_length = 25; }
+      if (history_length === undefined) { history_length = 500; }
       let url = '/history/device/' + device_id + '/history' + '?lastN=' + history_length;
       attrs.map((attr) => {url += '&attr=' + attr});
       return url;

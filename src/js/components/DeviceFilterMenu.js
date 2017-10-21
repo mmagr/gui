@@ -4,23 +4,30 @@ import MaterialSelect from "../components/MaterialSelect";
 class ListItem extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      click: true
-    }
-
+    this.state = { click: true }
     this.hideDevice = this.hideDevice.bind(this);
+    this.parseState = this.parseState.bind(this);
   }
 
   hideDevice(event){
-    if(this.state.click == true){
-      this.setState({click: !this.state.click});
+    this.props.toggleDisplay(this.props.device.id);
+  }
+
+  parseState() {
+    if (this.props.device.hasOwnProperty('hasPosition')){
+      if (this.props.device.hasPosition == false) {
+        return "fa fa-eye-slash";
+      }
+    }
+
+    if (this.props.device.hide){
+      return "fa fa-eye-slash";
     } else {
-      this.setState({click: !this.state.click});
+      return "fa fa-eye"
     }
   }
 
   render() {
-    let showOrHideDevice = this.state.click ? "fa fa-eye" : "fa fa-eye-slash";
     const name = this.props.device.label;
     const attrValue = this.props.device.rssi ? this.props.device.rssi : "unknown"
 
@@ -32,7 +39,9 @@ class ListItem extends Component {
         <div className="user-label truncate col s6">{name}</div>
         <div className="label col s6">RSSI {attrValue}</div>
         <div className="col s3 img" id="device-view">
-          <a className="" onClick={this.hideDevice}><i className={showOrHideDevice} aria-hidden="true"></i></a>
+          <a className="" onClick={this.hideDevice}>
+            <i className={this.parseState()} aria-hidden="true" />
+          </a>
         </div>
       </div>
     )
@@ -42,13 +51,6 @@ class ListItem extends Component {
 class ListRender extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {detail: props.deviceid};
-    this.setDetail = this.setDetail.bind(this);
-  }
-
-  setDetail(id) {
-    this.setState({detail: id});
   }
 
   render() {
@@ -60,31 +62,21 @@ class ListRender extends Component {
       )
     }
 
-    // handles reordering of cards to keep horizontal alignment
-    const target = this.state.detail;
-    const horSize = 3;
-    let display_list = JSON.parse(JSON.stringify(this.props.devices));
-    display_list.move = function(from, to) {
-      this.splice(to, 0, this.splice(from, 1)[0]);
-    }
-    if (target != null) {
-      for (let i = 0; i < display_list.length; i++) {
-        if (display_list[i].id == target) {
-          display_list.move(i,i - (i % horSize));
-          break;
-        }
-      }
-    }
-
-    if (display_list.length > 0) {
+    const devices = this.props.devices;
+    if ((devices.length > 0) && (devices.constructor == Array)){
       return (
         <div className="row">
-            { display_list.map((device, idx) =>
-              <ListItem device={device} key={device.id}
-                detail={device.id === this.state.detail}
-                setDetail={this.setDetail}
-              />
-            )}
+          { devices.map((device, idx) =>
+            <ListItem device={device} key={device.id} toggleDisplay={this.props.toggleDisplay}/>
+          )}
+        </div>
+      )
+    } else if ((Object.keys(devices).length > 0) && (devices.constructor == Object)) {
+      return (
+        <div className="row">
+          { Object.keys(devices).map((device_id) =>
+            <ListItem device={devices[device_id]} key={device_id} toggleDisplay={this.props.toggleDisplay}/>
+          )}
         </div>
       )
     } else {
@@ -121,54 +113,31 @@ class List extends Component {
 
     };
 
-    this.applyFiltering = this.applyFiltering.bind(this);
     this.hideDevices = this.hideDevices.bind(this);
     this.showDevices = this.showDevices.bind(this);
   }
 
-  // TODO that should be done by the backend, not here.
-  applyFiltering(deviceMap) {
-    // turns the stored device map into a list
-    let list = [];
-    for (let k in deviceMap) {
-      list.push(deviceMap[k]);
-    }
-
-    // TODO ordering should be defined by the user
-    list.sort((a,b) => {
-      if (a.updated > b.updated) {
-        return 1;
-      } else {
-        return -1;
-      }
-    })
-
-    return list;
-  }
-
-  hideDevices(event){
+  hideDevices(event) {
+    // TODO this is wrong - do over
     if (this.state.hide === false) {
       this.setState({hide: !this.state.hide});
     }
   }
 
-  showDevices(event){
+  showDevices(event) {
+    // TODO this is wrong - do over
     if (this.state.hide === true) {
       this.setState({hide: !this.state.hide});
     }
   }
 
   render(){
-    const filteredList = this.applyFiltering(this.props.devices);
-    let hide = this.state.hide ? 'hide' : '';
-
-    const showCanvas = 'deviceCanvas col s12 ' + hide;
     return (
       <div className="list-of-devices">
         <div className="row device-list">
           <div className="col s12 main-title center-align">Devices</div>
           <div className="col s12 info-header">
-            <div className= "col s1 subtitle">{filteredList.length}</div>
+            <div className= "col s1 subtitle">{this.props.devices.length}</div>
             <div className= "col s5 title">Devices</div>
             <div className="col s6 device-list-actions">
               <div className="col s6 action-hide">
@@ -179,12 +148,11 @@ class List extends Component {
               </div>
             </div>
           </div>
-          <div className={showCanvas}>
-            {(filteredList.length > 0) ? (
-              <ListRender devices={filteredList} loading={this.props.loading} deviceid={this.props.deviceid} />
-            ) : (
-              <div className="col s12 background-info">No configured devices</div>
-            )}
+          <div className="deviceCanvas col s12">
+            <ListRender devices={this.props.devices}
+                        loading={this.props.loading}
+                        deviceid={this.props.deviceid}
+                        toggleDisplay={this.props.toggleDisplay} />
           </div>
         </div>
       </div>
@@ -433,7 +401,9 @@ class SideBar extends Component {
     const divFilterList =  this.state.click ? (
       <Filter devices={this.props.devices} callback={this.changeSideBar}/>
     ) : (
-      <List devices={this.props.devices} callback={this.changeSideBar}/>
+      <List devices={this.props.devices}
+            callback={this.changeSideBar}
+            toggleDisplay={this.props.toggleDisplay}/>
     );
 
     return (
