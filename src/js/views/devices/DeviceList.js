@@ -28,7 +28,7 @@ function SummaryItem(props) {
 
           <div className="lst-entry-body col s12">
             {/* TODO fill those with actual metrics */}
-            <div className="col s3 metric"s>
+            <div className="col s3 metric">
               <div className="metric-value">{attrs}</div>
               <div className="metric-label">Attributes</div>
             </div>

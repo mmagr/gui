@@ -13,8 +13,9 @@
   color: black;
   background: none;
   font-size: 12px;
-  border: 0px;
+  border: 0;
   box-shadow: none;
+  padding-left: 0;
 }
 
 
@@ -95,8 +96,17 @@
       color: #4F4F4F;
     }
 
+    title{
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+      font-size: 17px;
+      letter-spacing: 0.66px;
+      text-transform: uppercase;
+      color: #4F4F4F;
+    }
+
     span{
-      font-family: 'Open Sans';
+      font-family: 'Open Sans', 'Roboto', sans-serif;
       font-weight: bold;
       font-size: 13px;
       letter-spacing: 0.39px;
@@ -112,7 +122,7 @@
   padding-left: 21px;
 
   .attribute-header{
-    font-family: Open Sans;
+    font-family: 'Open Sans', 'Roboto', sans-serif;
     font-style: normal;
     font-weight: bold;
     line-height: 16px;
@@ -135,7 +145,7 @@
 
   .hightlight
   {
-    font-family: Open Sans;
+    font-family: 'Open Sans', 'Roboto', sans-serif;
     font-style: normal;
     font-weight: normal;
     line-height: 16px;
@@ -161,13 +171,22 @@
 {
   height:750px;
   background: #FAFAFA;
-  box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.25);
   margin-top: -10px;
-  padding: 15px 0px 0px 0px !important;
-  margin-right: 5px;
-  z-index: 120;
-  position: absolute;
 
+  padding: 15px 0 0 0 !important;
+
+  .detail-box-header {
+      font-family: 'Open Sans', 'Roboto', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.42px;
+      font-weight: 400;
+      text-transform: uppercase;
+      color: #2D9CDB;
+      padding: 6px 22px;
+      border-bottom: 2px solid #2D9CDB;
+      text-align: right;
+  }
 
   .detail-box-body
   {
@@ -177,15 +196,14 @@
   .metric
   {
     text-transform: uppercase;
-    padding: 7px;
-    padding-left: 39px;
+    padding: 7px 7px 7px 39px;
 
     span{
       display: block;
     }
 
     .label{
-      font-family: 'Open Sans', 'Roboto';
+      font-family: 'Open Sans', 'Roboto', sans-serif;
       font-size: 12px;
       letter-spacing: 0.42px;
       color: #4F4F4F;
@@ -193,7 +211,7 @@
 
     .value
     {
-      font-family: 'Open Sans', 'Roboto';
+      font-family: 'Open Sans', 'Roboto', sans-serif;
       font-weight: bold;
       font-size: 13px;
       letter-spacing: 0.39px;
@@ -295,14 +313,12 @@
 .device-painel
 {
   position: absolute;
-  z-index: 994;
-  // z-index: 1010;
+  z-index: 1000;
   background: rgba(255, 255, 255, 0.97);
   right: 0;
   display: inline-block;
   top: 0;
   width: 400px;
-  height: auto;
 }
 
 .device-painel-body
@@ -320,7 +336,7 @@
 
 .device-list{
   width: 100%;
-  height: calc(100% - 45px);
+  height: 100%;
   float: right;
   //border-left: 1px solid #BDBDBD;
   margin: 0;
@@ -332,8 +348,8 @@
     text-align: center;
     letter-spacing: 0.39px;
     text-transform: uppercase;
-    padding: 16px 10px 10px 10px;
-    color: #DADADA;
+    padding: 20px 10px 6px 10px;
+    color: #b3b3b3;
   }
 
   .info-header{
@@ -374,24 +390,24 @@
   .deviceCanvas{
     width: 100% !important;
     // overflow-y: auto;
-    height: 100%;
+    //height: 100%;
     overflow-y: scroll;
-    // height: calc(100% - 106px);
+     height: calc(100% - 81px);
 
     .row{
       margin:0;
       .lst-entry-title{
-        padding: 4px 10px;
+        padding: 0 10px;
         height: 60px;
         position: relative;
         transition: linear 100ms;
         border-bottom: 1px solid #e2e2e2;
-
         .img
         {
           width: 58px;
           padding: 10px;
-
+          height: 100%;
+          margin: 0 10px;
           img
           {
               width: 100%;
@@ -401,31 +417,32 @@
           overflow: visible !important;
           width: 90%;
         }
-        position: relative;
-        transition: linear 100ms;
         &:hover{
-          background-color: rgba(0, 0, 0, 0.15);
+          background-color: rgba(0, 0, 0, 0.1);
           transition: linear 100ms;
         }
         .user-label{
           text-transform: uppercase;
           padding-top: 6px;
           font-family: 'Open Sans', sans-serif;
-          color: #161616;
+          color: #4F4F4F;
           font-weight: normal;
         }
         .label{
           position: relative;
           font-family: 'Open Sans', sans-serif;
-          color: #161616;
+          color: #4F4F4F;
           font-weight: bold;
 
         }
         #device-view{
           position: relative;
           text-align: center;
+          top: -28px;
+          padding: 20px;
+          float: right;
           i{
-            color: #000000;
+            color: #4f4f4f;
           }
         }
       }
@@ -436,7 +453,7 @@
 }
 
 .device-footer{
-  bottom: 0px;
+  bottom: 0;
   width: 100%;
   position: absolute;
   cursor: pointer;
@@ -444,10 +461,9 @@
   height: 35px;
   text-align: center;
   vertical-align: middle;
-    //border-left: #BDBDBD solid 1px;
     a{
       font-family: 'Open Sans', sans-serif;
-      color: #DADADA;
+      color: #b3b3b3;
       font-weight: bold;
       font-size: 0.8em;
     }
@@ -460,12 +476,12 @@
   box-shadow: 0 3px 2px rgba(0, 0, 0, 0.16), 0 3px 3px rgba(0, 0, 0, 0.23);
   animation: fadein 200ms;
   .filter-header{
-    padding: 30px 0 10px 0;
+    padding: 20px 0 6px 0;
     .label{
       font-family: 'Open Sans', sans-serif;
       font-weight: bold;
-      font-size: 1.5em;
-      color: #DADADA;
+      font-size: 15px;
+      color: #b3b3b3;
     }
   }
 
@@ -483,7 +499,7 @@
     .label{
       color: #707070;
       font-weight: bold;
-      font-size: 1.2em;
+      font-size: 14px;
       margin: 0 0 10px 0;
     }
 
@@ -503,6 +519,7 @@
         line-height: 1.5;
         color: #AAA6C9;
         font-family: 'Roboto', sans-serif;
+        font-size: 13px;
       }
 
       &.active{
@@ -618,8 +635,8 @@
     .label{
       font-family: 'Open Sans', sans-serif;
       font-weight: bold;
-      font-size: 1.5em;
-      color: #DADADA;
+      font-size: 14px;
+      color: #b3b3b3;
       padding: 15px 0 0 0;
     }
 
@@ -689,6 +706,8 @@
           font-family: "Roboto", sans-serif;
           text-transform: capitalize;
           float: left;
+          box-shadow: none;
+          border: 2px solid hsla(0, 0%, 92%, 1);
         }
         #btn-search{
           background-color: #448EEF;
@@ -738,7 +757,7 @@
 .icon-marker {
   padding: 3px;
   margin: 0 auto;
-  border: 1px solid $white;
+  border: 1px solid #FFFFFF;
   // box-shadow: 0 0 7px 6px lightgray;
   border-radius: 50%;
 }
