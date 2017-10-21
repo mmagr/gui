@@ -320,23 +320,18 @@ class DetailAttrs extends Component {
   }
 }
 
-function TagList (props) {
-  const tags = props.tags;
-  return (
-    <span>
-      { (tags.length > 0) ? (
-        tags.map((tag) =>
-          <span className="tag" key={tag}>
-            <i className="fa fa-tag"></i>{tag}
-          </span>
-        )
-      ) : (
-        <sapn className="tag">No tags set</sapn>
-      )}
-    </span>
-  )
+class AttributeSelector extends Component {
+  render() {
+    return (
+      <div className="col s12 p0 attr-line">
+        <a className="waves-effect waves-light" onClick={this.clearList}>
+          <span className="attr-name">{this.props.label}</span>
+          <span>Last received value: {this.props.currentValue}</span>
+        </a>
+      </div>
+    )
+  }
 }
-
 
 class AttributeBox extends Component {
   constructor(props) {
@@ -352,66 +347,65 @@ class AttributeBox extends Component {
   render() {
     // if (this.props.deviceid == null || !this.props.devices.hasOwnProperty(this.props.deviceid)) {
     //   console.error('Failed to load device attribute data', this.props.deviceid, this.props.devices);
-      return (
-        <div className="col s12 p0 full-height">
-            <div className="col s5 card-box">
-                <div className="detail-box-header">
-                    Attributes
-                </div>
-
-                <div className="col s12 p0 attr-line">
-                  <a className="waves-effect waves-light" onClick={this.clearList}>
-                  <span className="attr-name">Coordinates</span>
-                  <span>Last received value: </span>
-                  </a>
-                </div>
-
-                <div className="col s12 p0 attr-line">
-                  <a className="waves-effect waves-light" onClick={this.clearList}>
-                  <span className="attr-name">RPM</span>
-                  <span>Last received value: </span>
-                  </a>
-                </div>
-
-                <div className="col s12 p0 attr-line">
-                  <a className="waves-effect waves-light" onClick={this.clearList}>
-                  <span className="attr-name">Temperature</span>
-                  <span>Last received value: </span>
-                  </a>
-                </div>
-
-                <div className="col s12 p0 attr-line">
-                  <a className="waves-effect waves-light" onClick={this.clearList}>
-                  <span className="attr-name">Track</span>
-                  <span>Last received value: </span>
-                  </a>
-                </div>
-            </div>
-            <div className="col s7 graph-box">
-              <div className='col s12 legend'>
-                Showing 1 Hour From 10:23 to 11:23 10/13/2017
-              </div>
-              {
-                // <DetailAttrs />
-              }
-            </div>
+    return (
+      <div className="col s12 p0 full-height">
+        <div className="col s5 card-box">
+          <div className="detail-box-header">Attributes</div>
+          {this.props.attrs.map((attr) => (
+            <AttributeSelector label={attr} currentValue="" key={attr} />
+          ))}
         </div>
-      )
-    }
+        <div className="col s7 graph-box">
+          <div className='col s12 legend'>Showing 1 Hour From 10:23 to 11:23 10/13/2017</div>
+          {
+            // <DetailAttrs />
+          }
+        </div>
+      </div>
+    )
   }
-
+}
 
 class DeviceDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {selected_attribute: ''};
+    this.state = {
+      new_attr: null,
+      selected_attributes: [
+        "RSSI",
+        "SNR",
+        "Altitude",
+        "RPM",
+        "Oil Temperature",
+        "Fuel level",
+        "Ground speed"
+      ]
+    };
     this.handleSelectedAttribute = this.handleSelectedAttribute.bind(this);
+    this.handleAddAttribute = this.handleAddAttribute.bind(this);
+    this.handleClear = this.handleClear.bind(this);
   }
 
-  handleSelectedAttribute() {
-    console.log("handleSelectedAttribute ");
+  handleSelectedAttribute(event) {
+    event.preventDefault();
+    this.setState({new_attr: event.target.value});
   }
 
+  handleAddAttribute(event) {
+    event.preventDefault();
+    let attrList = this.state.selected_attributes;
+    attrList.push(this.state.new_attr);
+    const updated = {
+      new_attr: "",
+      selected_attributes: attrList
+    }
+    this.setState(updated);
+  }
+
+  handleClear(event) {
+    event.preventDefault();
+    this.setState({selected_attributes:[]});
+  }
 
   render() {
     const device = this.props.devices[this.props.deviceid];
@@ -449,32 +443,34 @@ class DeviceDetail extends Component {
             <div className="row attribute-header">All Attributes</div>
             <span className="highlight"> Showing <b>12</b> of <b>32</b> attributes</span>
             <div className="col s12 p16">
-              <div className="input-field col s5">
-              {
-              //  <MaterialSelect id="attributes-select" name="attribute" value={this.state.selected_attribute}
-              //        onChange={this.handleSelectedAttribute}>
-              //   <option value="Temperature">Temperature</option>
-              //   <option value="RPM">RPM</option>
-              //   <option value="Track">Track</option>
-              //   <option value="Speed">Speed</option>
-              //   <option value="Coordinates">Coordinates</option>
-              // </MaterialSelect>
-              }
+              <div className="input-field col s12">
+                <MaterialSelect id="attributes-select" name="attribute"
+                                value={this.state.selected_attribute}
+                                onChange={this.handleSelectedAttribute}>
+                  <option value="">Select attribute to display</option>
+                  {device.attrs.map((attr) => (
+                    <option value={attr.name} key={attr.object_id} >{attr.name}</option>
+                  ))}
+                </MaterialSelect>
               </div>
               <div className="col s12 actions-buttons">
                 <div className="col s6 button ta-center">
                   <a className="waves-effect waves-light btn btn-light" id="btn-clear" tabIndex="-1"
-                     title="Clear" onClick={this.clearList}>
+                     title="Clear" onClick={this.handleClear}>
                     Clear
                   </a>
                 </div>
-                <div className="col s6 button" type="submit">
+                <div className="col s6 button ta-center" type="submit" onClick={this.handleAddAttribute}>
                   <a className="waves-effect waves-light btn" id="btn-add" tabIndex="-1" title="Add">
                     <i className="clickable fa fa-plus"/>
                   </a>
                 </div>
               </div>
-              <div className="box-list"></div>
+              <div className="box-list">
+                {this.state.selected_attributes.map((attr) => (
+                  <div key={attr}>{attr}</div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -484,7 +480,7 @@ class DeviceDetail extends Component {
           </div>
           <div className="col s12 p0 data-box full-height">
             <AltContainer store={MeasureStore} inject={{device: device}}>
-              <AttributeBox />
+              <AttributeBox attrs={this.state.selected_attributes}/>
             </AltContainer>
           </div>
         </div>
