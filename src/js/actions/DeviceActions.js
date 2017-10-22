@@ -26,9 +26,7 @@ class DeviceActions {
       deviceManager.getDevice(deviceid)
         .then((device) => {
           this.updateDevices([device]);
-          if (cb) {
-            cb(device);
-          }
+          if (cb) { cb(device); }
         })
         .catch((error) => {
           console.error("Failed to fetch single device", error);

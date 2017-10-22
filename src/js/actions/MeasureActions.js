@@ -30,7 +30,7 @@ class MeasureActions {
 
   updatePosition(data) {return data;}
   fetchPosition(device_id, history_length) {
-    const attrs = ['lat', 'lng', 'sinr', 'rssi'];
+    const attrs = ['lat', 'lng', 'sinr', 'rssi', 'ts'];
     function getUrl() {
       if (history_length === undefined) { history_length = 1; }
       let url = '/history/device/' + device_id + '/history' + '?lastN=' + history_length;
@@ -55,6 +55,9 @@ class MeasureActions {
           }
           if (reply.rssi.length > 0) {
             data.rssi = parseFloat(reply.rssi[0].value)
+          }
+          if (reply.ts.length > 0) {
+            data.ts = reply.ts[0].ts
           }
 
           this.updatePosition(data);

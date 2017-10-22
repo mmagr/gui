@@ -417,12 +417,10 @@ class DeviceDetail extends Component {
 
   render() {
     const device = this.props.devices[this.props.deviceid];
-    if (device.position !== undefined)
-    {
-      var location = "Lat: "+device.position[0]+" Lng: "+device.position[1];
-    }
-    else{
-      var location = "";
+    console.log(device);
+    let location = "";
+    if (device.position !== undefined) {
+      location = "Lat: "+device.position[0]+" Lng: "+device.position[1];
     }
 
     return (
@@ -436,7 +434,7 @@ class DeviceDetail extends Component {
             </div>
             <div className="metric">
                 <span className="label">Last update</span>
-                <span className="value">{util.printTime(device.updated)}</span>
+                <span className="value">{util.iso_to_date(device.ts)}</span>
             </div>
             <div className="metric">
                 <span className="label">Location</span>

@@ -132,6 +132,11 @@ class Util {
       date.setSeconds(Math.floor(timestamp));
       return date.toLocaleString();
   }
+
+  iso_to_date(timestamp) {
+    let date = new Date(timestamp);
+    return date.toLocaleString();
+  }
 }
 
 var util = new Util();
