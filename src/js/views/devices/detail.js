@@ -363,9 +363,7 @@ class AttributeBox extends Component {
         </div>
         <div className="col s7 graph-box">
           <div className='col s12 legend'>Showing 1 Hour From 10:23 to 11:23 10/13/2017</div>
-          {
-            // <DetailAttrs />
-          }
+          {/* <DetailAttrs /> */}
         </div>
       </div>
     )

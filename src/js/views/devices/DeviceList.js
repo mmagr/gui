@@ -44,6 +44,45 @@ function SummaryItem(props) {
 }
 
 class DeviceList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {displayMap:{}};
+
+    this.shouldShow = this.shouldShow.bind(this);
+    this.toggleDisplay = this.toggleDisplay.bind(this);
+    this.setDisplay = this.setDisplay.bind(this);
+    this.setDisplayMap = this.setDisplayMap.bind(this);
+  }
+
+  // TODO this could be its own component (filtering)
+  shouldShow(device) {
+    if (this.state.displayMap.hasOwnProperty(device)) {
+      return this.state.displayMap[device];
+    }
+
+    return true;
+  }
+
+  toggleDisplay(device){
+    let displayMap = this.state.displayMap;
+    if (displayMap.hasOwnProperty(device)) {
+      displayMap[device] = !displayMap[device];
+    } else {
+      displayMap[device] = false;
+    }
+    this.setState({displayMap: displayMap});
+  }
+
+  setDisplay(device, status) {
+    let displayMap = this.state.displayMap;
+    displayMap[device] = status;
+    this.setState({displayMap: displayMap});
+  }
+
+  setDisplayMap(displayMap) {
+    this.setState({displayMap: displayMap});
+  }
+
   render() {
     if (this.props.loading) {
       return (<Loading />);
@@ -53,14 +92,13 @@ class DeviceList extends Component {
     let filteredList = []
     if ((this.props.devices !== undefined) && (this.props.devices !== null)) {
       for (let k in this.props.devices) {
-        if (this.props.devices.hasOwnProperty(k)){
+        if (this.props.devices.hasOwnProperty(k) && this.shouldShow(k)){
           filteredList.push(this.props.devices[k]);
         }
       }
     }
 
     const device_icon  = (<img src='images/icons/chip.png' />)
-
     if (filteredList.length > 0) {
       return (
         <div className = "flex-wrapper bg-light-gray">
@@ -77,7 +115,10 @@ class DeviceList extends Component {
                 { filteredList.map((device, idx) => <SummaryItem device={device} key={device.id}/>) }
               </div>
             </div>
-              <SideBar devices={this.props.devices} />
+              <SideBar devices={this.props.devices}
+                       setDisplayMap={this.setDisplayMap}
+                       toggleDisplay={this.toggleDisplay}
+                       statusMap={this.state.displayMap}/>
           </div>
         </div>
       )

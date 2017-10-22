@@ -52,7 +52,6 @@ class DeviceActions {
       }
 
       list.map((device) => {
-        console.log('will read data for device', device.id);
         MeasureActions.fetchPosition.defer(device.id, 1);
       })
     }

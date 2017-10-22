@@ -501,8 +501,8 @@
     }
 }
 
-.device-filtering{
-  height: auto;
+.device-filtering {
+  // height: auto;
   width: 100%;
   padding: 0 40px;
   box-shadow: 0 3px 2px rgba(0, 0, 0, 0.16), 0 3px 3px rgba(0, 0, 0, 0.23);
@@ -542,7 +542,7 @@
       box-sizing: border-box;
       border-radius: 15px;
       float: left;
-      margin: 0 10px;
+      margin: 10px 10px;
       font-weight: bold;
       cursor: pointer;
       transition: linear 200ms;

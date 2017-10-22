@@ -150,7 +150,6 @@ class PositionRenderer extends Component {
     }
 
     let parsedEntries = this.props.devices.reduce((result, k) => {
-      console.log('parsing', k);
       if ((k.position !== undefined) && (!k.hide)) {
         result.push({
           id:k.id,
@@ -207,7 +206,6 @@ class PositionRenderer extends Component {
         </div>
         <TileLayer url={tileURL} attribution={attribution} />
         {parsedEntries.map((k) => {
-          console.log(k);
           return (
             <Marker
               onContextMenu={(e) => { this._handleContextMenu(e, k.id); }}
@@ -265,11 +263,45 @@ class DeviceMap extends Component {
     super(props);
 
     this.state = {
-      hide: {}
-    }
+      displayMap:{},
+      tracking: {}
+    };
 
     this.toggleTracking = this.toggleTracking.bind(this);
+
     this.toggleDisplay = this.toggleDisplay.bind(this);
+    this.setDisplay = this.setDisplay.bind(this);
+    this.setDisplayMap = this.setDisplayMap.bind(this);
+  }
+
+  // TODO this could be its own component (filtering)
+  shouldShow(device) {
+    if (this.state.displayMap.hasOwnProperty(device)) {
+      return this.state.displayMap[device];
+    }
+
+    return true;
+  }
+
+  toggleDisplay(device){
+    let displayMap = this.state.displayMap;
+    if (displayMap.hasOwnProperty(device)) {
+      displayMap[device] = !displayMap[device];
+    } else {
+      displayMap[device] = false;
+    }
+    this.setState({displayMap: displayMap});
+  }
+
+  setDisplay(device, status) {
+    let displayMap = this.state.displayMap;
+    displayMap[device] = status;
+    this.setState({displayMap: displayMap});
+  }
+
+  setDisplayMap(displayMap) {
+    console.log('will updated displayMap', displayMap);
+    this.setState({displayMap: displayMap});
   }
 
   toggleTracking(device_id) {
@@ -278,17 +310,6 @@ class DeviceMap extends Component {
     } else {
       TrackingActions.dismiss(device_id);
     }
-  }
-
-  toggleDisplay(device_id) {
-    console.log('will toggle display status', device_id);
-    let newHide = this.state.hide;
-    if (this.state.hide.hasOwnProperty(device_id)) {
-      delete newHide[device_id];
-    } else {
-      newHide[device_id] = true;
-    }
-    this.setState({hide: newHide});
   }
 
   render() {
@@ -301,7 +322,7 @@ class DeviceMap extends Component {
         if (this.props.devices.hasOwnProperty(k)){
           let device = this.props.devices[k];
           device.hasPosition = device.hasOwnProperty('position');
-          device.hide = this.state.hide.hasOwnProperty(device.id);
+          device.hide = !this.shouldShow(k);
           if (this.props.tracking.hasOwnProperty(k) && (!device.hide)) {
             validTracking++;
             pointList = pointList.concat(this.props.tracking[k].map((e,k) => {
@@ -315,6 +336,7 @@ class DeviceMap extends Component {
           if (device.hasPosition) {
             validDevices++;
           }
+          console.log(device);
           pointList.push(device);
           deviceList.push(device);
         }
@@ -342,7 +364,8 @@ class DeviceMap extends Component {
         </SubHeader>
         <div className="deviceMapCanvas deviceMapCanvas-map col m12 s12 relative">
           <PositionRenderer devices={pointList} toggleTracking={this.toggleTracking}/>
-          <SideBar devices={deviceList} statusMap={this.state.hide} toggleDisplay={this.toggleDisplay}/>
+          <SideBar devices={this.props.devices} statusMap={this.state.displayMap}
+                   toggleDisplay={this.toggleDisplay} setDisplayMap={this.setDisplayMap} />
         </div>
       </div>
     )
