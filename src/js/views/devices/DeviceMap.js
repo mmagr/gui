@@ -205,6 +205,7 @@ class PositionRenderer extends Component {
           <div className="satelliteView" onClick = {() => this.setTiles(false)}>Satellite</div>
         </div>
         <TileLayer url={tileURL} attribution={attribution} />
+        <LayerAntenna />
         {parsedEntries.map((k) => {
           return (
             <Marker
@@ -217,6 +218,43 @@ class PositionRenderer extends Component {
             </Marker>
         )})}
       </Map>
+    )
+  }
+}
+
+class LayerAntenna extends Component {
+  constructor(props){
+    super(props)
+  }
+
+  render(){
+
+    var icon = L.icon({
+      iconUrl:'images/antenna-24.png'
+    });
+
+    var antennaAlem = L.marker([-21.26114, -48.09203]);
+    var antennaBarreiro = L.marker([-21.44663, -47.99272]);
+    var antennaSantaLydia = L.marker([-21.24722, -47.88995]);
+
+    return(
+      <div className="col s12">
+        <Marker position={antennaAlem._latlng} icon={icon}>
+          <Tooltip>
+            <span>Alem</span>
+          </Tooltip>
+        </Marker>
+        <Marker position={antennaBarreiro._latlng} icon={icon}>
+          <Tooltip>
+            <span>Barreiro</span>
+          </Tooltip>
+        </Marker>
+        <Marker position={antennaSantaLydia._latlng} icon={icon}>
+          <Tooltip>
+            <span>Santa Lydia</span>
+          </Tooltip>
+        </Marker>
+      </div>
     )
   }
 }
