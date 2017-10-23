@@ -22,70 +22,12 @@ import { Line } from 'react-chartjs-2';
 import { PositionRenderer } from './DeviceMap.js'
 import MaterialSelect from "../../components/MaterialSelect";
 
-// TODO make this its own component
-class RemoveDialog extends Component {
-  constructor(props) {
-    super(props);
-
-    this.dismiss = this.dismiss.bind(this);
-    this.remove = this.remove.bind(this);
-  }
-
-  componentDidMount() {
-    // materialize jquery makes me sad
-    let modalElement = ReactDOM.findDOMNode(this.refs.modal);
-    $(modalElement).ready(function() {
-      $('.modal').modal();
-    })
-  }
-
-  dismiss(event) {
-    event.preventDefault();
-    let modalElement = ReactDOM.findDOMNode(this.refs.modal);
-    $(modalElement).modal('close');
-  }
-
-  remove(event) {
-    event.preventDefault();
-    let modalElement = ReactDOM.findDOMNode(this.refs.modal);
-    this.props.callback(event);
-    $(modalElement).modal('close');
-  }
-
-  render() {
-    return (
-      <div className="modal" id={this.props.target} ref="modal">
-        <div className="modal-content full">
-          <div className="row center background-info">
-            <div><i className="fa fa-exclamation-triangle fa-4x" /></div>
-            <div>You are about to remove this device.</div>
-            <div>Are you sure?</div>
-          </div>
-        </div>
-        <div className="modal-footer right">
-            <button type="button" className="btn-flat btn-ciano waves-effect waves-light" onClick={this.dismiss}>cancel</button>
-            <button type="submit" className="btn-flat btn-red waves-effect waves-light" onClick={this.remove}>remove</button>
-        </div>
-      </div>
-    )
-  }
-}
-
 class DeviceUserActions extends Component {
   render() {
     return (
       <div>
-        <a className="waves-effect waves-light btn-flat btn-ciano" tabIndex="-1" title="Get code">
-          <i className="clickable fa fa-code"/>
-        </a>
-        <Link to={"/device/id/" + this.props.deviceid + "/edit"} className="waves-effect waves-light btn-flat btn-ciano" tabIndex="-1" title="Edit device">
-          <i className="clickable fa fa-pencil" />
-        </Link>
-        <a className="waves-effect waves-light btn-flat btn-ciano" tabIndex="-1" title="Remove device"
-           onClick={(e) => {e.preventDefault(); $('#' + this.props.confirmTarget).modal('open');}}>
-          <i className="clickable fa fa-trash"/>
-        </a>
-        <Link to={"/device/list"} className="waves-effect waves-light btn-flat btn-ciano" tabIndex="-1" title="Return to device list">
+        <Link className="waves-effect waves-light btn-flat btn-ciano"
+              to={"/device/list"}  tabIndex="-1"  title="Return to device list">
           <i className="clickable fa fa-times" />
         </Link>
       </div>
@@ -120,12 +62,9 @@ class Graph extends Component{
       return undefined;
     }
 
-    this.props.data.map((i) => {
-      let value = getValue(i);
-      if (value !== undefined) {
-        labels.push(util.printTime(Date.parse(i.recvTime)/1000));
-        values.push(value);
-      }
+    this.props.data.data[this.props.attr].map((i) => {
+      labels.push(util.iso_to_date(i.ts));
+      values.push(i.value);
     })
 
     if (values.length == 0) {
@@ -176,10 +115,7 @@ class Graph extends Component{
       maintainAspectRatio: false,
       legend: { display: false },
       scales: {
-        xAxes: [
-          { display: false },
-          { ticks: { autoSkip: true, maxRotation: 0, minRotation: 0 }}
-        ],
+        xAxes: [{ display: false }]
       }
     }
 
@@ -191,20 +127,23 @@ class Graph extends Component{
 
 // TODO move this to its own component
 function HistoryList(props) {
-  let trimmedList = props.data.filter((i) => {
-    return i.attrValue.trim().length > 0
+  let data = props.data.data[props.attr];
+  let trimmedList = data.filter((i) => {
+    return i.value.trim().length > 0
   })
   trimmedList.reverse();
 
   if (trimmedList.length > 0) {
     return (
-      <div className="full-height scrollable history-list">
-        {trimmedList.map((i,k) =>
-          <div className={"row " + (k % 2 ? "alt-row" : "")} key={i.recvTime}>
-            <div className="col s12 value">{i.attrValue}</div>
-            <div className="col s12 label">{util.printTime(Date.parse(i.recvTime)/1000)}</div>
-          </div>
-        )}
+      <div className="relative full-height" >
+        <div className="full-height full-width scrollable history-list">
+          {trimmedList.map((i,k) => {
+            return (<div className={"row " + (k % 2 ? "alt-row" : "")} key={i.ts}>
+              <div className="col s12 value">{i.value}</div>
+              <div className="col s12 label">{util.iso_to_date(i.ts)}</div>
+            </div>
+          )})}
+        </div>
       </div>
     )
   } else {
@@ -222,114 +161,57 @@ function Attr(props) {
     'integer': Graph,
     'float': Graph,
     'string': HistoryList,
-    'geo:point': Position,
     'default': HistoryList
   }
 
   const Renderer = props.type in known ? known[props.type] : known['default'];
   return (
     <Renderer {...props} />
+    // <span/>
   )
-}
-
-
-class DetailAttrs extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    this.props.device.attrs.map((i) => {
-      MeasureActions.fetchMeasures.defer(this.props.device.id, this.props.device.protocol, i);
-    })
-  }
-
-  render() {
-    const device = this.props.device;
-
-    let filteredStatics = this.props.device.static_attrs.filter((a) => { return (a.type.toLowerCase() != "geo:point")});
-
-    function AttrList(props) {
-      return (
-        <span>
-          { device.attrs.map((i, k) =>
-              <div className={"col s12 m6 l6 metric-card full-height mt10"} key={i.object_id} >
-                {(props.devices[device.id] && props.devices[device.id][i.name] &&
-                  (props.devices[device.id][i.name].loading == false)) ? (
-                  <div className="graphLarge z-depth-2 full-height">
-                    <div className="title ">
-                      <span>{i.name}</span>
-                      <span className="right"
-                            onClick={() => MeasureActions.fetchMeasures(device.id, device.protocol, i)}>
-                        <i className="fa fa-refresh" />
-                      </span>
-                    </div>
-                    <div className="contents no-padding">
-                      <Attr device={device} type={props.devices[device.id][i.name].type} data={props.devices[device.id][i.name].data}/>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="graphLarge z-depth-2 full-height">
-                    <span className="title">{i.name}</span>
-                    <div className="contents">
-                      <div className="background-info valign-wrapper full-height relative bg-gray">
-                        <i className="fa fa-circle-o-notch fa-spin fa-fw horizontal-center"/>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-          )}
-        </span>
-      )
-    }
-
-    if (filteredStatics.length > 0) {
-      return (
-        <span>
-          <div className="row">
-            {filteredStatics.map((i, k) =>
-              (i.type.toLowerCase() != "geo:point") && (
-                <div className="col s12 m3 l3">
-                  <div className="card z-depth-2">
-                    <div className="card-content row">
-                      <div className="col s12 main">
-                        <div className="value title">{i.name}</div>
-                        <div className="label">Name</div>
-                      </div>
-                      <div className="col s12">
-                        <div className="value">{i.value}</div>
-                        <div className="label">Value</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            )}
-            </div>
-            <AttrList devices={this.props.devices} />
-        </span>
-      )
-    } else {
-      return (
-        <div className="row half-height">
-          <AttrList devices={this.props.devices} />
-        </div>
-      )
-    }
-  }
 }
 
 class AttributeSelector extends Component {
   render() {
     return (
       <div className="col s12 p0 attr-line">
-        <a className="waves-effect waves-light" onClick={this.clearList}>
+        <a className="waves-effect waves-light"
+           onClick={() => {this.props.onClick(this.props.label)}} >
           <span className="attr-name">{this.props.label}</span>
           <span>Last received value: {this.props.currentValue}</span>
         </a>
       </div>
     )
+  }
+}
+
+class AttrHistory extends Component {
+  constructor(props){
+    super(props);
+  }
+
+  componentDidMount() {
+    MeasureActions.fetchMeasure(this.props.device, [this.props.attr], 250);
+  }
+
+  render() {
+    return (
+      <div className="graphLarge z-depth-2 full-height">
+        <div className="title ">
+          <span className="right"
+                onClick={() => {
+                  MeasureActions.fetchMeasure(this.props.device, [this.props.attr], 250);
+                }} >
+            <i className="fa fa-refresh" />
+          </span>
+        </div>
+        <div className="contents no-padding full-height">
+          <AltContainer store={MeasureStore}>
+            <Attr device={this.props.device} type={this.props.type} attr={this.props.attr}/>
+          </AltContainer>
+        </div>
+      </div>
+    );
   }
 }
 
@@ -341,12 +223,29 @@ class AttributeBox extends Component {
   }
 
   changeAttribute(attr_id) {
-    console.log("changeAttribute ",attr_id);
+    this.setState({selected: attr_id});
+    MeasureActions.fetchMeasure(this.props.device.id, [attr_id], 250);
   }
 
   render() {
-    // if (this.props.deviceid == null || !this.props.devices.hasOwnProperty(this.props.deviceid)) {
-    //   console.error('Failed to load device attribute data', this.props.deviceid, this.props.devices);
+    let device = this.props.device;
+    let attr = []
+    if (this.state.selected !== null) {
+      attr = device.attrs.filter((k) => {
+        return k.name.toUpperCase() == this.state.selected.toUpperCase();
+      });
+    }
+
+    let to = '';
+    let from = '';
+    if (attr[0]) {
+      if (this.props.data.data.hasOwnProperty(this.state.selected)){
+        to = util.iso_to_date(this.props.data.data[this.state.selected][0]['ts']);
+        let length = this.props.data.data[this.state.selected].length
+        from = util.iso_to_date(this.props.data.data[this.state.selected][length - 1]['ts']);
+      }
+    }
+
     return (
       <div className="col s12 p0 full-height">
         <div className="col s5 card-box">
@@ -354,16 +253,24 @@ class AttributeBox extends Component {
           {this.props.attrs.map((attr) => {
             let data = undefined;
             if (this.props.data && this.props.data.hasOwnProperty('data')) {
-              // console.log(this.props.data.data[attr][0]);
-              data = this.props.data.data[attr][0].value;
+              if (this.props.data.data.hasOwnProperty(attr))
+                data = this.props.data.data[attr][0].value;
             }
             return (
-              <AttributeSelector label={attr} key={attr} currentValue={data}/>
+              <AttributeSelector label={attr} key={attr}
+                                 currentValue={data}
+                                 onClick={this.changeAttribute} />
           )})}
         </div>
         <div className="col s7 graph-box">
-          <div className='col s12 legend'>Showing 1 Hour From 10:23 to 11:23 10/13/2017</div>
-          {/* <DetailAttrs /> */}
+          {attr[0] !== undefined ? (
+            <span>
+              <div className='col s12 legend'>Data from {from} to {to}</div>
+              <AttrHistory device={device.id} type={attr[0].type} attr={attr[0].name}/>
+            </span>
+          ) : (
+            null
+          )}
         </div>
       </div>
     )
@@ -403,6 +310,8 @@ class DeviceDetail extends Component {
       new_attr: "",
       selected_attributes: attrList
     }
+    MeasureActions.fetchMeasure.defer(this.props.deviceid,attrList,1);
+
     this.setState(updated);
   }
 
@@ -417,7 +326,6 @@ class DeviceDetail extends Component {
 
   render() {
     const device = this.props.devices[this.props.deviceid];
-    console.log(device);
     let location = "";
     if (device.position !== undefined) {
       location = "Lat: "+device.position[0]+" Lng: "+device.position[1];
@@ -575,7 +483,6 @@ class ViewDevice extends Component {
           <AltContainer store={DeviceStore} >
             <ViewDeviceImpl device_id={this.props.params.device}/>
           </AltContainer>
-          <RemoveDialog callback={this.remove} target="confirmDiag" />
         </ReactCSSTransitionGroup>
       </div>
     )

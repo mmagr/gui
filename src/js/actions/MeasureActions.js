@@ -8,7 +8,6 @@ class MeasureActions {
 
   updateMeasures(data) { return data; }
   fetchMeasure(device_id, attrs, history_length, callback) {
-    console.log('will fetch data for', device_id, attrs);
     function getUrl() {
       if (history_length === undefined) { history_length = 1; }
       let url = '/history/device/' + device_id + '/history' + '?lastN=' + history_length;
@@ -20,7 +19,12 @@ class MeasureActions {
       dispatch();
       util._runFetch(getUrl(), {method: 'get'})
         .then((reply) => {
-          const data = {device: device_id, data: reply};
+          let data = {device: device_id, data: reply};
+          if (attrs.length == 1) {
+            data.data = {};
+            data.data[attrs[0]] = reply;
+          }
+          // console.log('will update store with', reply);
           this.updateMeasures(data);
           if (callback) {callback(reply)}
         })
@@ -40,7 +44,6 @@ class MeasureActions {
 
     return (dispatch) => {
       dispatch();
-      // console.log("should fetch " + getUrl());
       util._runFetch(getUrl(), {method: 'get'})
         .then((reply) => {
           let data = {device_id: device_id};
