@@ -24,7 +24,6 @@ class MeasureActions {
             data.data = {};
             data.data[attrs[0]] = reply;
           }
-          // console.log('will update store with', reply);
           this.updateMeasures(data);
           if (callback) {callback(reply)}
         })
@@ -34,7 +33,7 @@ class MeasureActions {
 
   updatePosition(data) {return data;}
   fetchPosition(device_id, history_length) {
-    const attrs = ['lat', 'lng', 'sinr', 'rssi', 'ts'];
+    const attrs = ['lat', 'lng', 'sinr', 'rssi', 'ts', 'device-status'];
     function getUrl() {
       if (history_length === undefined) { history_length = 1; }
       let url = '/history/device/' + device_id + '/history' + '?lastN=' + history_length;
@@ -61,6 +60,9 @@ class MeasureActions {
           }
           if (reply.ts.length > 0) {
             data.ts = reply.ts[0].ts
+          }
+          if (reply['device-status'].length > 0) {
+            data.status = reply['device-status'][0].value
           }
 
           this.updatePosition(data);

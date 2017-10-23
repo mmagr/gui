@@ -13,7 +13,6 @@ class TrackingActions {
 
     return (dispatch) => {
       dispatch();
-      // console.log("should fetch " + getUrl());
       util._runFetch(getUrl(), {method: 'get'})
         .then((reply) => {
           let history = {device_id: device_id, data: []};

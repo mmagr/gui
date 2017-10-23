@@ -56,7 +56,6 @@ class ListRender extends Component {
   }
 
   render() {
-    console.log('listRender', this.props.displayMap);
     if (this.props.loading) {
       return (
         <div className="background-info valign-wrapper full-height">
@@ -113,7 +112,6 @@ class List extends Component {
   }
 
   render(){
-    console.log('list', this.props.displayMap);
     return (
       <div className="list-of-devices">
         <div className="row device-list">
@@ -301,7 +299,6 @@ class SideBar extends Component {
 
   toggleSideBar() {
     const last = this.state.sideBarOpened;
-    console.log("toggleSideBar ",last);
     this.setState({sideBarOpened: !last});
   }
 

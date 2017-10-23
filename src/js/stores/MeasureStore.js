@@ -17,12 +17,9 @@ class MeasureStore {
 
   handleFetchMeasures(measureData) {}
   handleUpdateMeasures(measureData) {
-    console.log(this.data.device, measureData.device);
     if (this.data.device == measureData.device) {
       for (let k in measureData.data) {
-        console.log('checking', k);
         if (measureData.data.hasOwnProperty(k)) {
-          console.log('will update data for', k);
           this.data.data[k] = measureData.data[k];
         }
       }

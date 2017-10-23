@@ -40,15 +40,6 @@ class DeviceActions {
 
       // triggers store update (w/o positioning)
       dispatch(list);
-
-      function getUrl(device, query) {
-        let url = '/history/device/' + device.id + '/history'
-        if (query) {
-          url += "?" + query
-        }
-        return url;
-      }
-
       list.map((device) => {
         MeasureActions.fetchPosition.defer(device.id, 1);
       })

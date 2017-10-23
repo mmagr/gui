@@ -316,7 +316,6 @@ class DeviceMap extends Component {
   }
 
   setDisplayMap(displayMap) {
-    console.log('will updated displayMap', displayMap);
     this.setState({displayMap: displayMap});
   }
 
@@ -352,7 +351,6 @@ class DeviceMap extends Component {
           if (device.hasPosition) {
             validDevices++;
           }
-          console.log(device);
           pointList.push(device);
           deviceList.push(device);
         }

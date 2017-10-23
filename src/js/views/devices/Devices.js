@@ -45,11 +45,10 @@ class Devices extends Component {
   }
 
 
-    toggleDisplay() {
-      const last = this.state.displayList;
-      console.log("will change display to " + (last?"map":"list"));
-      this.setState({displayList: !last});
-    }
+  toggleDisplay() {
+    const last = this.state.displayList;
+    this.setState({displayList: !last});
+  }
 
 
   componentDidMount() {
