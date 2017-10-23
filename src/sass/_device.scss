@@ -857,7 +857,7 @@
 
 .mapOptions{
   position: absolute;
-  left: 60px;
+  left: 60px !important;
   z-index: 450;
   top: 13px;
   cursor: pointer;
