@@ -139,8 +139,8 @@ function HistoryList(props) {
         <div className="full-height full-width scrollable history-list">
           {trimmedList.map((i,k) => {
             return (<div className={"row " + (k % 2 ? "alt-row" : "")} key={i.ts}>
-              <div className="col s12 value">{i.value}</div>
-              <div className="col s12 label">{util.iso_to_date(i.ts)}</div>
+              <div className="col s7 value">{i.value}</div>
+              <div className="col s5 label">{util.iso_to_date(i.ts)}</div>
             </div>
           )})}
         </div>
@@ -196,16 +196,14 @@ class AttrHistory extends Component {
 
   render() {
     return (
-      <div className="graphLarge z-depth-2 full-height">
-        <div className="title ">
-          <span className="right"
+      <div className="graphLarge">
+        <div className="refresh-btn-history"
                 onClick={() => {
                   MeasureActions.fetchMeasure(this.props.device, [this.props.attr], 250);
                 }} >
             <i className="fa fa-refresh" />
-          </span>
         </div>
-        <div className="contents no-padding full-height">
+        <div className="contents no-padding height-300">
           <AltContainer store={MeasureStore}>
             <Attr device={this.props.device} type={this.props.type} attr={this.props.attr}/>
           </AltContainer>
@@ -250,6 +248,7 @@ class AttributeBox extends Component {
       <div className="col s12 p0 full-height">
         <div className="col s5 card-box">
           <div className="detail-box-header">Attributes</div>
+          <div className='col s12 attr-box-body'>
           {this.props.attrs.map((attr) => {
             let data = undefined;
             if (this.props.data && this.props.data.hasOwnProperty('data')) {
@@ -261,6 +260,7 @@ class AttributeBox extends Component {
                                  currentValue={data}
                                  onClick={this.changeAttribute} />
           )})}
+          </div>
         </div>
         <div className="col s7 graph-box">
           {attr[0] !== undefined ? (
@@ -391,7 +391,7 @@ class DeviceDetail extends Component {
             </div>
           </div>
         </div>
-        <div className="col s9 device-map full-height">
+        <div className="col s9 device-map auto-height">
           <div className="col s12 device-map-box">
             <PositionRenderer devices={[device]}/>
           </div>
@@ -434,7 +434,7 @@ class ViewDeviceImpl extends Component {
     }
 
     return (
-      <div className="full-height">
+      <div className="auto-height bg-light-gray">
         <SubHeader>
           <div className="box-sh box-sh-2">
             <label> Viewing Device </label> <div className="device_name">{device.label}</div>

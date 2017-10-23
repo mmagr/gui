@@ -1,3 +1,32 @@
+.attr-box-body
+{
+  overflow:auto;
+  height: 350px;
+}
+
+.height-300{
+    height: 300px;
+}
+
+.refresh-btn-history{
+    position: absolute;
+    right: 0px;
+    top:0px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.graphLarge
+{
+  position: relative;
+  height: 383px;
+}
+
+.300-height
+{
+  height: 300px;
+}
+
 .box-sh-2{
   float: left !important;
   padding-top: 10px !important;
@@ -78,14 +107,20 @@
   background: #EDEDED;
   height: 100%;
 
+  > span
+  {
+    height: 400px;
+    overflow: auto;
+  }
   .legend
   {
     padding: 10px;
     font-family: "Open Sans";
     font-weight: bold;
+    letter-spacing: 0.82px;
+    height: 30px;
     font-size: 12px;
     text-align: center;
-    letter-spacing: 0.82px;
     color: #4F4F4F;
     text-transform: uppercase;
   }
@@ -96,7 +131,6 @@
   box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.25);
   height: 100%;
   padding: 0px !important;
-  overflow: auto;
 
   .attr-line
   {
@@ -169,6 +203,18 @@
     background: #F1F1F1;
     border-radius: 2px;
     padding: 0.5em 0.25em;
+    max-height: 205px;
+    overflow: auto;
+
+    div
+    {
+      font-family: "Open Sans";
+      font-weight: 500;
+      letter-spacing: 1.20px;
+      font-size: 14px;
+      padding: 2px 17px;
+      text-transform: capitalize;
+    }
   }
 
 
@@ -224,7 +270,8 @@
       text-align: right;
   }
 
-  .detail-box-body{}
+  .detail-box-body{
+  }
 
   .metric {
     text-transform: uppercase;

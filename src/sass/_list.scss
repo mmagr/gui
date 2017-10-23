@@ -771,10 +771,11 @@ $status: #0c343d;
 .history-list {
   .value {
     font-size: 1.5em;
+    text-align: center;
   }
   .label {
     font-size: 0.75em;
-    text-align: right;
+    text-align: center;
   }
   .alt-row {
     background-color: $almost-white

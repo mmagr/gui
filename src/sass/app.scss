@@ -72,6 +72,11 @@ html {
   height: 100%;
 }
 
+.auto-height
+{
+  height: auto;
+}
+
 .full-height {
   height: 100%;
 }
@@ -106,6 +111,9 @@ body {
   padding-left: 0 !important;
 }
 
+.p10{
+  padding: 10px;
+}
 .paddingTop10 {
   padding-top:10px !important;
 }
