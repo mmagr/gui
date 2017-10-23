@@ -17,6 +17,7 @@ import { divIcon } from 'leaflet';
 import { ImageOverlay , latLngBounds } from 'react-leaflet'
 import ReactResizeDetector from 'react-resize-detector';
 
+var grayPin = L.divIcon({className: 'icon-marker bg-medium-gray'});
 var darkBluePin = L.divIcon({className: 'icon-marker bg-dark-blue'});
 var lightBluePin = L.divIcon({className: 'icon-marker bg-light-blue'});
 var greyishBluePin = L.divIcon({className: 'icon-marker bg-greyish-blue'});
@@ -116,37 +117,14 @@ class PositionRenderer extends Component {
     }
 
     function getPinColor(p) {
-      if (p.sinr === undefined) {
-        return darkBluePin;
-      }
-
-      if(p.sinr > 20){
-        return darkBluePin;
-      }
-
-      if(p.sinr > 15){
-        return lightBluePin;
-      }
-
-      if(p.sinr > 10){
-        return greyishBluePin;
-      }
-
-      if(p.sinr > 5){
-        return bluePin;
-      }
-
-      if(p.sinr > 2){
-        return orangePin;
-      }
-
-      if(p.sinr > -1){
-        return redPin;
-      }
-
-      if(p.sinr <= -1){
-        return blackPin;
-      }
+      if (p.sinr === undefined) {return grayPin;}
+      if (p.sinr > 20){return darkBluePin;}
+      if (p.sinr > 15){return lightBluePin;}
+      if (p.sinr > 10){return greyishBluePin;}
+      if (p.sinr > 5){return bluePin;}
+      if (p.sinr > 2){return orangePin;}
+      if (p.sinr > -1){return redPin;}
+      if (p.sinr <= -1){return blackPin;}
     }
 
     let parsedEntries = this.props.devices.reduce((result, k) => {
