@@ -178,7 +178,11 @@ class AttributeSelector extends Component {
         <a className="waves-effect waves-light"
            onClick={() => {this.props.onClick(this.props.label)}} >
           <span className="attr-name">{this.props.label}</span>
-          <span>Last received value: {this.props.currentValue}</span>
+          {this.props.currentValue ? (
+            <span>Last received value: {this.props.currentValue}</span>
+          ) : (
+            <span>No data available to display</span>
+          )}
         </a>
       </div>
     )
@@ -234,13 +238,15 @@ class AttributeBox extends Component {
       });
     }
 
-    let to = '';
-    let from = '';
+    let timeRange = undefined;
     if (attr[0]) {
       if (this.props.data.data.hasOwnProperty(this.state.selected)){
-        to = util.iso_to_date(this.props.data.data[this.state.selected][0]['ts']);
-        let length = this.props.data.data[this.state.selected].length
-        from = util.iso_to_date(this.props.data.data[this.state.selected][length - 1]['ts']);
+        if (this.props.data.data[this.state.selected].length > 0){
+          const to = util.iso_to_date(this.props.data.data[this.state.selected][0]['ts']);
+          let length = this.props.data.data[this.state.selected].length
+          const from = util.iso_to_date(this.props.data.data[this.state.selected][length - 1]['ts']);
+          timeRange = "Data from " + from + " to " + to;
+        }
       }
     }
 
@@ -252,8 +258,11 @@ class AttributeBox extends Component {
           {this.props.attrs.map((attr) => {
             let data = undefined;
             if (this.props.data && this.props.data.hasOwnProperty('data')) {
-              if (this.props.data.data.hasOwnProperty(attr))
-                data = this.props.data.data[attr][0].value;
+              if (this.props.data.data.hasOwnProperty(attr)){
+                if (this.props.data.data[attr].length > 0){
+                  data = this.props.data.data[attr][0].value;
+                }
+              }
             }
             return (
               <AttributeSelector label={attr} key={attr}
@@ -265,7 +274,7 @@ class AttributeBox extends Component {
         <div className="col s7 graph-box">
           {attr[0] !== undefined ? (
             <span>
-              <div className='col s12 legend'>Data from {from} to {to}</div>
+              <div className='col s12 legend'>{timeRange}</div>
               <AttrHistory device={device.id} type={attr[0].type} attr={attr[0].name}/>
             </span>
           ) : (
