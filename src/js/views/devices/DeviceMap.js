@@ -8,6 +8,7 @@ import {SubHeader, SubHeaderItem} from "../../components/SubHeader";
 import { PageHeader } from "../../containers/full/PageHeader";
 
 import TrackingActions from '../../actions/TrackingActions';
+import MeasureActions from '../../actions/MeasureActions';
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from 'react-router'
@@ -16,6 +17,8 @@ import { LayerGroup, LayersControl, Map, TileLayer, Marker, Popup,Tooltip, Point
 import { divIcon } from 'leaflet';
 import { ImageOverlay , latLngBounds } from 'react-leaflet'
 import ReactResizeDetector from 'react-resize-detector';
+
+import io from 'socket.io-client';
 
 var grayPin = L.divIcon({className: 'icon-marker bg-medium-gray'});
 var darkBluePin = L.divIcon({className: 'icon-marker bg-dark-blue'});
@@ -365,6 +368,20 @@ class DeviceMap extends Component {
     } else {
       TrackingActions.dismiss(device_id);
     }
+  }
+
+  componentDidMount() {
+    this.io = io('iotmid01.cpqd.com.br:8000');
+    this.io.on('gps', function(data) {
+      data.position = [data.lat, data.lng]
+      delete data.lat;
+      delete data.lng;
+      MeasureActions.updatePosition(data);
+    });
+  }
+
+  componentWillUnmount() {
+    this.io.close();
   }
 
   render() {
