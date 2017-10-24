@@ -116,6 +116,9 @@ class Graph extends Component{
       legend: { display: false },
       scales: {
         xAxes: [{ display: false }]
+      },
+      layout: {
+        padding: { left: 10, right: 10 }
       }
     }
 
@@ -173,8 +176,9 @@ function Attr(props) {
 
 class AttributeSelector extends Component {
   render() {
+    const outerClass = this.props.active ? " active" : "";
     return (
-      <div className="col s12 p0 attr-line">
+      <div className={"col s12 p0 attr-line" + outerClass}>
         <a className="waves-effect waves-light"
            onClick={() => {this.props.onClick(this.props.label)}} >
           <span className="attr-name">{this.props.label}</span>
@@ -257,6 +261,7 @@ class AttributeBox extends Component {
           <div className='col s12 attr-box-body'>
           {this.props.attrs.map((attr) => {
             let data = undefined;
+            let active = this.state.selected && (attr.toUpperCase() == this.state.selected.toUpperCase());
             if (this.props.data && this.props.data.hasOwnProperty('data')) {
               if (this.props.data.data.hasOwnProperty(attr)){
                 if (this.props.data.data[attr].length > 0){
@@ -267,6 +272,7 @@ class AttributeBox extends Component {
             return (
               <AttributeSelector label={attr} key={attr}
                                  currentValue={data}
+                                 active={active}
                                  onClick={this.changeAttribute} />
           )})}
           </div>
