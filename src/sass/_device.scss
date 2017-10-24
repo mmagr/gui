@@ -8,7 +8,8 @@
 .attr-box-body
 {
   overflow:auto;
-  height: calc(100% - 35px);
+  height: calc(100% - 32px);
+  padding: 0 !important;
 }
 
 .height-300{
@@ -25,7 +26,8 @@
 
 .graphLarge {
   position: relative;
-  height: 100%;
+  height: calc(100% - 30px);
+  top: +30px;
   .contents {
     // margin-top: 7%;
     height: 85%;
@@ -84,21 +86,28 @@
   padding: 16px;
 }
 
-.btn-light
-{
+.btn-light {
   color: black;
   background: none;
   font-size: 12px;
-  border: 0;
   box-shadow: none;
-  padding-left: 0;
+  padding: 0;
+  font-weight: bold;
+  width: 75px;
+  border: none;
+  transition: ease 350ms;
+  &:hover {
+    color: #ffffff;
+    border: none;
+    transition: ease 350ms;
+  }
 }
 
 
 .device-map
 {
 
-    margin-top: -10px;
+    //margin-top: -10px;
     position: absolute;
     right: 0px !important;
     width: 75%;
@@ -145,6 +154,7 @@
   box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.25);
   height: 100%;
   padding: 0px !important;
+  position: relative;
 
   .attr-line
   {
@@ -270,10 +280,11 @@
 .detail-box {
   // height:750px;
   background: #FAFAFA;
-  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.25);
-  margin-top: -10px;
-
+  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.25) !important;
+  //margin-top: -10px;
   padding: 15px 0 0 0 !important;
+  z-index: 1040;
+  position: relative;
 
   .detail-box-header {
       font-family: 'Open Sans', 'Roboto', sans-serif;
