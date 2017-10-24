@@ -177,8 +177,10 @@ class PositionRenderer extends Component {
     )
     const attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors';
 
+    const center = this.props.center ? this.props.center : [-21.272678, -47.958908];
+
     return (
-      <Map center={parsedEntries[0].pos}
+      <Map center={center}
            zoom={13}
            ref={m => {this.leafletMap = m;}}
            onContextMenu={this._handleClick}
