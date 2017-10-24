@@ -373,7 +373,10 @@ class DeviceMap extends Component {
   }
 
   componentDidMount() {
-    this.io = io('iotmid01.cpqd.com.br:8000');
+    const options = {
+      transports: ['websocket']
+    }
+    this.io = io(window.location.host, options);
     this.io.on('gps', function(data) {
       data.position = [data.lat, data.lng]
       delete data.lat;
