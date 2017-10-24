@@ -175,7 +175,7 @@ class PositionRenderer extends Component {
            onContextMenu={this._handleClick}
           //  onClick={this._handleClick}
            onMoveStart={this._handleMoveStart}>
-        <LayerBox> </LayerBox>
+        <LayerBox opacity={this.props.opacity}> </LayerBox>
         {contextMenu}
         <ReactResizeDetector handleWidth onResize={this.resize.bind(this)} />
         <div className="mapOptions col s12">
@@ -249,13 +249,15 @@ class LayerBox extends Component {
     this.setState({visible:!this.state.visible});
   }
 
+
   render() {
     const layerMapBounds = L.latLngBounds([
         [-20.90974,-48.83651],
         [-21.80963,-47.11802]
     ]);
 
-    const layerOpacity = 0.4;
+
+    const layerOpacity = parseFloat(this.props.opacity);
     const imageoverlay = this.state.visible ? (
       <ImageOverlay
         opacity={layerOpacity}
@@ -274,13 +276,39 @@ class LayerBox extends Component {
   }
 }
 
+class OpacityRange extends Component{
+  constructor(props){
+    super(props);
+    this.updateOpacity = this.updateOpacity.bind(this);
+  }
+
+  updateOpacity(event){
+    this.props.setOpacity(event.target.value);
+    event.preventDefault();
+  }
+
+  render(){
+    return (
+      <div className="opacity">
+        <label className="labelOpacity">Opacity:</label>
+        <form>
+          <p className="range-field">
+            <input type="range" min="0.1" max="1" step="0.1" defaultValue="0" onChange={this.updateOpacity} />
+          </p>
+        </form>
+      </div>
+    )
+  }
+}
+
 class DeviceMap extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       displayMap:{},
-      tracking: {}
+      tracking: {},
+      opacity: 0.1
     };
 
     this.toggleTracking = this.toggleTracking.bind(this);
@@ -288,6 +316,12 @@ class DeviceMap extends Component {
     this.toggleDisplay = this.toggleDisplay.bind(this);
     this.setDisplay = this.setDisplay.bind(this);
     this.setDisplayMap = this.setDisplayMap.bind(this);
+
+    this.setOpacity = this.setOpacity.bind(this);
+  }
+
+  setOpacity(value){
+    this.setState({opacity: value});
   }
 
   // TODO this could be its own component (filtering)
@@ -374,10 +408,11 @@ class DeviceMap extends Component {
         <SubHeader>
           <SubHeaderItem text={displayText} icon={device_icon} active='false' clickable='false' />
           <SubHeaderItem text={trackingText} icon={location_icon} active='false' clickable='false'  onClick='false'/>
+          <OpacityRange setOpacity={this.setOpacity}/>
           {this.props.toggle}
         </SubHeader>
         <div className="deviceMapCanvas deviceMapCanvas-map col m12 s12 relative">
-          <PositionRenderer devices={pointList} toggleTracking={this.toggleTracking}/>
+          <PositionRenderer devices={pointList} toggleTracking={this.toggleTracking} opacity={this.state.opacity}/>
           <SideBar devices={this.props.devices} statusMap={this.state.displayMap}
                    toggleDisplay={this.toggleDisplay} setDisplayMap={this.setDisplayMap} />
         </div>
