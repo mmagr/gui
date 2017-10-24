@@ -197,13 +197,13 @@ class AttrHistory extends Component {
   render() {
     return (
       <div className="graphLarge">
-        <div className="refresh-btn-history"
+        {/* <div className="refresh-btn-history"
                 onClick={() => {
                   MeasureActions.fetchMeasure(this.props.device, [this.props.attr], 250);
                 }} >
             <i className="fa fa-refresh" />
-        </div>
-        <div className="contents no-padding height-300">
+        </div> */}
+        <div className="contents no-padding">
           <AltContainer store={MeasureStore}>
             <Attr device={this.props.device} type={this.props.type} attr={this.props.attr}/>
           </AltContainer>
@@ -353,8 +353,8 @@ class DeviceDetail extends Component {
                 <span className="value">{device.protocol ? device.protocol : "MQTT"}</span>
             </div>
           </div>
-          <div className="row attribute-box">
-            <div className="row attribute-header">All Attributes</div>
+          <div className="col 12 attribute-box">
+            <div className="col 12 attribute-header">All Attributes</div>
             <span className="highlight">
               Showing <b>{this.state.selected_attributes.length}</b>
               of <b>{device.attrs.length}</b> attributes
@@ -383,15 +383,15 @@ class DeviceDetail extends Component {
                   </a>
                 </div>
               </div>
-              <div className="box-list">
+              {/* <div className="box-list">
                 {this.state.selected_attributes.map((attr) => (
                   <div key={attr}>{attr}</div>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
-        <div className="col s9 device-map auto-height">
+        <div className="col s9 device-map full-height">
           <div className="col s12 device-map-box">
             <PositionRenderer devices={[device]}/>
           </div>
@@ -434,7 +434,7 @@ class ViewDeviceImpl extends Component {
     }
 
     return (
-      <div className="auto-height bg-light-gray">
+      <div className="full-height bg-light-gray">
         <SubHeader>
           <div className="box-sh box-sh-2">
             <label> Viewing Device </label> <div className="device_name">{device.label}</div>

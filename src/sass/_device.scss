@@ -1,7 +1,7 @@
 .attr-box-body
 {
   overflow:auto;
-  height: 350px;
+  height: calc(100% - 35px);
 }
 
 .height-300{
@@ -16,10 +16,13 @@
     cursor: pointer;
 }
 
-.graphLarge
-{
+.graphLarge {
   position: relative;
-  height: 383px;
+  height: 100%;
+  .contents {
+    // margin-top: 7%;
+    height: 85%;
+  }
 }
 
 .300-height
@@ -92,12 +95,11 @@
 }
 .device-map-box
 {
-    height: 400px;
+    height: 50%;
     display: inline-block;
     padding: 0px !important;
 
-    .leaflet-container
-    {
+    .leaflet-container {
       width: 100%;
     }
 }
@@ -181,14 +183,17 @@
 }
 
 .attribute-box {
-  padding-top: 44px;
-  padding-left: 21px;
+  // padding-top: 44px;
+  padding-left: 21px !important;
 
   .attribute-header {
     font-family: 'Open Sans', 'Roboto', sans-serif;
     font-style: normal;
     font-weight: bold;
     line-height: 16px;
+    width: 100%;
+    padding: 10px;
+    display:block;
     font-size: 13px;
     text-transform: uppercase;
     color: #ACACAC;
@@ -247,7 +252,7 @@
 }
 
 .data-box {
-  height: calc(100% - 400px);
+  height: 50%;
 }
 
 .detail-box {
@@ -914,7 +919,7 @@ h1, h2, p {
 }
 
 .leaflet-container {
-  height: 400px;
+  height: 100%;
   width: 80%;
   margin: 0 auto;
 }
@@ -1065,7 +1070,7 @@ h1, h2, p {
     .btn-flat{
       position: relative;
       right: -20vw;
-      width: 25%;
+      width: 30%;
     }
   }
   .deviceCanvas{
