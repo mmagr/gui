@@ -6,6 +6,7 @@ import util from '../comms/util';
 
 class MeasureActions {
 
+  appendMeasures(data) { return data; }
   updateMeasures(data) { return data; }
   fetchMeasure(device_id, attrs, history_length, callback) {
     function getUrl() {

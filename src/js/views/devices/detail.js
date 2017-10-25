@@ -1,5 +1,3 @@
-
-
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -13,7 +11,6 @@ import MeasureStore from '../../stores/MeasureStore';
 import MeasureActions from '../../actions/MeasureActions';
 import DeviceActions from '../../actions/DeviceActions';
 import DeviceStore from '../../stores/DeviceStore';
-import deviceManager from '../../comms/devices/DeviceManager';
 import util from "../../comms/util/util";
 import {SubHeader, SubHeaderItem} from "../../components/SubHeader";
 import {Loading} from "../../components/Loading";
@@ -21,6 +18,8 @@ import {Loading} from "../../components/Loading";
 import { Line } from 'react-chartjs-2';
 import { PositionRenderer } from './DeviceMap.js'
 import MaterialSelect from "../../components/MaterialSelect";
+
+import io from 'socket.io-client';
 
 class DeviceUserActions extends Component {
   render() {
@@ -476,6 +475,15 @@ class ViewDevice extends Component {
 
   componentDidMount() {
     DeviceActions.fetchSingle.defer(this.props.params.device);
+    const options = {transports: ['websocket']};
+    this.io = io(window.location.host, options);
+    this.io.on(this.props.params.device, function(data) {
+      MeasureActions.appendMeasures(data);
+    });
+  }
+
+  componentWillUnmount() {
+    this.io.close();
   }
 
   remove(e) {
