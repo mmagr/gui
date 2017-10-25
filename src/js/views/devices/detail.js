@@ -365,7 +365,7 @@ class DeviceDetail extends Component {
     const device = this.props.devices[this.props.deviceid];
     let location = "";
     if (device.position !== undefined) {
-      location = "Lat: "+device.position[0]+" Lng: "+device.position[1];
+      location = "Lat: "+device.position[0].toFixed(6)+" Lng: "+device.position[1].toFixed(6);
     }
 
     return (
