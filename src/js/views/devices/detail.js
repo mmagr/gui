@@ -291,6 +291,29 @@ class AttributeBox extends Component {
   }
 }
 
+function StatusDisplay(props) {
+  return (
+    <div className="detail-box-body">
+      <div className="metric">
+          <span className="label">Attributes</span>
+          <span className="value">{props.device.attrs.length + props.device.static_attrs.length}</span>
+      </div>
+      <div className="metric">
+          <span className="label">Last update</span>
+          <span className="value">{util.iso_to_date(props.device.ts)}</span>
+      </div>
+      <div className="metric">
+          <span className="label">Location</span>
+          <span className="value">{props.location}</span>
+      </div>
+      <div className="metric">
+          <span className="label">Protocol</span>
+          <span className="value">{props.device.protocol ? props.device.protocol : "MQTT"}</span>
+      </div>
+    </div>
+  )
+}
+
 class DeviceDetail extends Component {
   constructor(props) {
     super(props);
@@ -349,24 +372,7 @@ class DeviceDetail extends Component {
       <div className="row detail-body">
         <div className="col s3 detail-box full-height">
           <div className="detail-box-header">General</div>
-          <div className="detail-box-body">
-            <div className="metric">
-                <span className="label">Attributes</span>
-                <span className="value">{device.attrs.length + device.static_attrs.length}</span>
-            </div>
-            <div className="metric">
-                <span className="label">Last update</span>
-                <span className="value">{util.iso_to_date(device.ts)}</span>
-            </div>
-            <div className="metric">
-                <span className="label">Location</span>
-                <span className="value">{location}</span>
-            </div>
-            <div className="metric">
-                <span className="label">Protocol</span>
-                <span className="value">{device.protocol ? device.protocol : "MQTT"}</span>
-            </div>
-          </div>
+          <StatusDisplay location={location} device={device} />
           <div className="col 12 attribute-box">
             <div className="col 12 attribute-header">All Attributes</div>
             <span className="highlight">
@@ -397,11 +403,6 @@ class DeviceDetail extends Component {
                   </a>
                 </div>
               </div>
-              {/* <div className="box-list">
-                {this.state.selected_attributes.map((attr) => (
-                  <div key={attr}>{attr}</div>
-                ))}
-              </div> */}
             </div>
           </div>
         </div>
@@ -479,6 +480,21 @@ class ViewDevice extends Component {
     this.io = io(window.location.host, options);
     this.io.on(this.props.params.device, function(data) {
       MeasureActions.appendMeasures(data);
+
+      const fields = ['sinr', 'rssi', 'ts', 'device-status'];
+      let device_data = {device_id: data.device_id};
+      device_data.position = [data.lat.value, data.lng.value]
+      fields.map((field) => {
+        if (data.hasOwnProperty(field)){
+          if (field == 'ts') {
+            device_data[field] = (new Date()).toLocaleString();
+
+          } else {
+            device_data[field] = data[field].value;
+          }
+        }
+      })
+      MeasureActions.updatePosition(device_data);
     });
   }
 

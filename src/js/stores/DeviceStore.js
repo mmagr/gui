@@ -62,9 +62,10 @@ class DeviceStore {
       if (this.devices.hasOwnProperty(data.device_id)) {
         for (let k in data) {
           if ((k != "device_id") && (data.hasOwnProperty(k))) {
-            this.devices[data.device_id][k] = data[k];
             if (k == "status" && data[k][0]) {
               this.devices[data.device_id]._status = data[k];
+            } else {
+              this.devices[data.device_id][k] = data[k];
             }
           }
         }
