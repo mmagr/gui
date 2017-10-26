@@ -11,6 +11,7 @@ import MeasureStore from '../../stores/MeasureStore';
 import MeasureActions from '../../actions/MeasureActions';
 import DeviceActions from '../../actions/DeviceActions';
 import DeviceStore from '../../stores/DeviceStore';
+import DeviceMeta from '../../stores/DeviceMeta';
 import util from "../../comms/util/util";
 import {SubHeader, SubHeaderItem} from "../../components/SubHeader";
 import {Loading} from "../../components/Loading";
@@ -314,21 +315,10 @@ function StatusDisplay(props) {
   )
 }
 
-class DeviceDetail extends Component {
+class AttrSelector extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      new_attr: null,
-      selected_attributes: [
-        "rssi",
-        "sinr",
-        "alt",
-        "rpm",
-        "oilTemperature",
-        "fuelLevel",
-        "speed"
-      ]
-    };
+    this.state = {new_attr: null};
     this.handleSelectedAttribute = this.handleSelectedAttribute.bind(this);
     this.handleAddAttribute = this.handleAddAttribute.bind(this);
     this.handleClear = this.handleClear.bind(this);
@@ -341,74 +331,124 @@ class DeviceDetail extends Component {
 
   handleAddAttribute(event) {
     event.preventDefault();
-    let attrList = this.state.selected_attributes;
-    attrList.push(this.state.new_attr);
-    const updated = {
-      new_attr: "",
-      selected_attributes: attrList
-    }
-    MeasureActions.fetchMeasure.defer(this.props.deviceid,attrList,1);
+    if (this.state.new_attr == null){ return; }
 
-    this.setState(updated);
+    const attrList = this.props.selected.concat([this.state.new_attr]);
+    MeasureActions.fetchMeasure.defer(this.props.deviceid,attrList,1);
+    this.props.onChange(attrList);
+    this.setState({new_attr: null});
   }
 
   handleClear(event) {
     event.preventDefault();
-    this.setState({selected_attributes:[]});
+    this.props.onChange([]);
+  }
+
+  render() {
+    return (
+      <div className="col 12 attribute-box">
+        <div className="col 12 attribute-header">All Attributes</div>
+        <span className="highlight">
+          Showing <b>{this.props.selected.length}</b>
+          of <b>{this.props.attrs.length}</b> attributes
+        </span>
+        <div className="col s12 p16">
+          <div className="input-field col s12">
+            <MaterialSelect id="attributes-select" name="attribute"
+                            value={this.state.selected_attribute}
+                            onChange={this.handleSelectedAttribute}>
+              <option value={null}>Select attribute to display</option>
+              {this.props.attrs.map((attr) => (
+                <option value={attr.name} key={attr.object_id} >{attr.name}</option>
+              ))}
+            </MaterialSelect>
+          </div>
+          <div className="col s12 actions-buttons">
+            <div className="col s6 button ta-center">
+              <a className="waves-effect waves-light btn btn-light" id="btn-clear" tabIndex="-1"
+                 title="Clear" onClick={this.handleClear}>
+                Clear
+              </a>
+            </div>
+            <div className="col s6 button ta-center" type="submit" onClick={this.handleAddAttribute}>
+              <a className="waves-effect waves-light btn" id="btn-add" tabIndex="-1" title="Add">
+                <i className="clickable fa fa-plus"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+// TODO do this properly, using props.children
+function PositionWrapper(props) {
+  const device = props.devices[props.device_id];
+  return (
+    <PositionRenderer devices={[device]} allowContextMenu={false} center={device.position}/>
+  )
+}
+
+// TODO do this properly, using props.children
+function HeaderWrapper(props) {
+  const device = props.devices[props.device_id];
+  let location = "";
+  if (device.position !== undefined) {
+    location = "Lat: "+device.position[0].toFixed(6)+" Lng: "+device.position[1].toFixed(6);
+  }
+  return (
+    <StatusDisplay location={location} device={device} />
+  )
+}
+
+class DeviceDetail extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selected_attributes: [
+        "rssi",
+        "sinr",
+        "alt",
+        "rpm",
+        "oilTemperature",
+        "fuelLevel",
+        "speed"
+      ]
+    }
+
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
     MeasureActions.fetchMeasure.defer(this.props.deviceid,this.state.selected_attributes,1);
   }
 
+  onChange(attrs) {
+    this.setState({selected_attributes: attrs});
+  }
+
   render() {
     const device = this.props.devices[this.props.deviceid];
-    let location = "";
-    if (device.position !== undefined) {
-      location = "Lat: "+device.position[0].toFixed(6)+" Lng: "+device.position[1].toFixed(6);
-    }
 
     return (
       <div className="row detail-body">
         <div className="col s3 detail-box full-height">
           <div className="detail-box-header">General</div>
-          <StatusDisplay location={location} device={device} />
-          <div className="col 12 attribute-box">
-            <div className="col 12 attribute-header">All Attributes</div>
-            <span className="highlight">
-              Showing <b>{this.state.selected_attributes.length}</b>
-              of <b>{device.attrs.length}</b> attributes
-            </span>
-            <div className="col s12 p16">
-              <div className="input-field col s12">
-                <MaterialSelect id="attributes-select" name="attribute"
-                                value={this.state.selected_attribute}
-                                onChange={this.handleSelectedAttribute}>
-                  <option value="">Select attribute to display</option>
-                  {device.attrs.map((attr) => (
-                    <option value={attr.name} key={attr.object_id} >{attr.name}</option>
-                  ))}
-                </MaterialSelect>
-              </div>
-              <div className="col s12 actions-buttons">
-                <div className="col s6 button ta-center">
-                  <a className="waves-effect waves-light btn btn-light" id="btn-clear" tabIndex="-1"
-                     title="Clear" onClick={this.handleClear}>
-                    Clear
-                  </a>
-                </div>
-                <div className="col s6 button ta-center" type="submit" onClick={this.handleAddAttribute}>
-                  <a className="waves-effect waves-light btn" id="btn-add" tabIndex="-1" title="Add">
-                    <i className="clickable fa fa-plus"/>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AltContainer store={DeviceStore} >
+            <HeaderWrapper device_id={this.props.deviceid} />
+          </AltContainer>
+          <AttrSelector attrs={device.attrs}
+                        selected={this.state.selected_attributes}
+                        onChange={this.onChange} />
         </div>
         <div className="col s9 device-map full-height">
           <div className="col s12 device-map-box">
-            <PositionRenderer devices={[device]} allowContextMenu={false} center={device.position}/>
+            <AltContainer store={DeviceStore} >
+              <PositionWrapper device_id={this.props.deviceid}/>
+            </AltContainer>
           </div>
           <div className="col s12 p0 data-box full-height">
             <AltContainer store={MeasureStore} inject={{device: device}}>
@@ -476,6 +516,7 @@ class ViewDevice extends Component {
 
   componentDidMount() {
     DeviceActions.fetchSingle.defer(this.props.params.device);
+
     const options = {transports: ['websocket']};
     this.io = io(window.location.host, options);
     this.io.on(this.props.params.device, function(data) {
@@ -519,7 +560,7 @@ class ViewDevice extends Component {
           transitionName="first"
           transitionAppear={true} transitionAppearTimeout={500}
           transitionEnterTimeout={500} transitionLeaveTimeout={500} >
-          <AltContainer store={DeviceStore} >
+          <AltContainer store={DeviceMeta} >
             <ViewDeviceImpl device_id={this.props.params.device}/>
           </AltContainer>
         </ReactCSSTransitionGroup>
