@@ -180,7 +180,7 @@ class PositionRenderer extends Component {
           //  onClick={this._handleClick}
            onViewportChanged={this._handleViewPortChange}
            onMoveStart={this._handleMoveStart}>
-        <LayerBox opacity={this.props.opacity}> </LayerBox>
+        <LayerBox> </LayerBox>
         {contextMenu}
         <ReactResizeDetector handleWidth onResize={this.resize.bind(this)} />
         <div className="mapOptions col s12">
@@ -245,15 +245,26 @@ class LayerAntenna extends Component {
 class LayerBox extends Component {
   constructor(props) {
     super(props);
-    this.state = {visible:true};
+    this.state = {visible:false, showCoverageMap: false, opacity: 0.4};
     this.toggleLayer = this.toggleLayer.bind(this);
+
+    this.showCoverageMap = this.showCoverageMap.bind(this);
+    this.receiveOpacity = this.receiveOpacity.bind(this);
   }
 
   toggleLayer(e) {
     e.preventDefault();
     this.setState({visible:!this.state.visible});
+    this.setState({opacity:this.state.opacity});
   }
 
+  showCoverageMap(condition){
+    this.setState({showCoverageMap: condition});
+  }
+
+  receiveOpacity(opacity){
+    this.setState({opacity:opacity});
+  }
 
   render() {
     const layerMapBounds = L.latLngBounds([
@@ -262,49 +273,72 @@ class LayerBox extends Component {
     ]);
 
 
-    const layerOpacity = parseFloat(this.props.opacity);
-    const imageoverlay = this.state.visible ? (
-      <ImageOverlay
-        opacity={layerOpacity}
-        bounds={layerMapBounds}
-        url='images/layers/files/Combined.png'
-      /> ) : null
+    const layerOpacity = parseFloat(this.state.opacity);
+
+    const coverage = this.state.visible ? (
+      <Coverage showCoverageMap={this.showCoverageMap} receiveOpacity={this.receiveOpacity}
+      opacity={this.state.opacity} checked={this.state.showCoverageMap} />
+    ) : null
 
     return (
       <div className="col s12">
         <div className=" layer-div" onClick={this.toggleLayer}>
           <img src='images/layers.png' />
         </div>
-        {imageoverlay}
+        {this.state.showCoverageMap ? (
+          <ImageOverlay
+            opacity={layerOpacity}
+            bounds={layerMapBounds}
+            url='images/layers/files/Combined.png'
+          />
+        ) : null}
+        {coverage}
       </div>
     )
   }
 }
 
-class OpacityRange extends Component{
+class Coverage extends Component{
   constructor(props){
     super(props);
+    this.state = {showCoverage:true}
+
+    this.setCoverage = this.setCoverage.bind(this);
     this.updateOpacity = this.updateOpacity.bind(this);
+
+  }
+
+  setCoverage(event){
+    event.preventDefault();
+    this.setState({showCoverage: !this.state.showCoverage});
+    this.props.showCoverageMap(this.state.showCoverage);
   }
 
   updateOpacity(event){
-    this.props.setOpacity(event.target.value);
-    event.preventDefault();
+    this.props.receiveOpacity(event.target.value);
   }
 
+
   render(){
-    return (
-      <div className="opacity">
-        <label className="labelOpacity">Opacity:</label>
-        <form>
-          <p className="range-field">
-            <input type="range" min="0.1" max="1" step="0.1" defaultValue="0" onChange={this.updateOpacity} />
-          </p>
-        </form>
-      </div>
+    return(
+      <form className="selectCoverage">
+        <label className="label">Coverage Map:</label>
+        <p id="hideCoverage" onClick={this.setCoverage}>
+          <input type="checkbox" checked={this.props.checked} />
+          <label>Show coverage map</label>
+        </p>
+
+        <div className="opacity">
+          <label className="labelOpacity">Opacity:</label>
+            <p className="range-field">
+              <input type="range" min="0.1" max="1" step="0.1" defaultValue={this.props.opacity} onChange={this.updateOpacity} />
+            </p>
+        </div>
+      </form>
     )
   }
 }
+
 
 class DeviceMap extends Component {
   constructor(props) {
@@ -313,7 +347,6 @@ class DeviceMap extends Component {
     this.state = {
       displayMap:{},
       tracking: {},
-      opacity: 0.1
     };
 
     this.toggleTracking = this.toggleTracking.bind(this);
@@ -321,8 +354,6 @@ class DeviceMap extends Component {
     this.toggleDisplay = this.toggleDisplay.bind(this);
     this.setDisplay = this.setDisplay.bind(this);
     this.setDisplayMap = this.setDisplayMap.bind(this);
-
-    this.setOpacity = this.setOpacity.bind(this);
   }
 
   setOpacity(value){
@@ -430,7 +461,6 @@ class DeviceMap extends Component {
         <SubHeader>
           <SubHeaderItem text={displayText} icon={device_icon} active='false' clickable='false' />
           <SubHeaderItem text={trackingText} icon={location_icon} active='false' clickable='false'  onClick='false'/>
-          <OpacityRange setOpacity={this.setOpacity}/>
           {this.props.toggle}
         </SubHeader>
         <div className="deviceMapCanvas deviceMapCanvas-map col m12 s12 relative">

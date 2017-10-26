@@ -869,6 +869,44 @@
   }
 }
 
+.selectCoverage{
+  width:200px;
+  height:100px;
+  position: absolute;
+  right: 60px;
+  z-index: 450;
+  top: 15%;
+  background: rgba(255, 255, 255, 0.77);
+  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.16), 0 3px 3px rgba(0, 0, 0, 0.23);
+  background-color: #f1f1f1;
+  border-radius: 5%;
+
+  .label{
+    padding-left: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+  #hideCoverage{
+    position: relative;
+    left: 5px;
+  }
+
+  .opacity{
+    width: 65%;
+    height: 10%;
+    position: relative;
+    left: 30%;
+    bottom: 40%;
+
+    .labelOpacity{
+      position: relative;
+      top:43px;
+      right: 40%;
+    }
+  }
+}
+
 .mapOptions{
   position: absolute;
   left: 60px !important;
@@ -898,21 +936,6 @@
     padding: 5px;
   }
 }
-
-.opacity{
-  width: 25%;
-  height: 10%;
-  position: relative;
-  left: 50%;
-  bottom: 130%;
-
-  .labelOpacity{
-    position: relative;
-    top:45px;
-    left: -20%;
-  }
-}
-
 
 
 .icon-marker {
