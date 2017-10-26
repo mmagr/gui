@@ -20,6 +20,7 @@ import ReactResizeDetector from 'react-resize-detector';
 
 import io from 'socket.io-client';
 
+var offlinePin = L.divIcon({className: 'icon-marker bg-true-black'});
 var grayPin = L.divIcon({className: 'icon-marker bg-medium-gray'});
 var darkBluePin = L.divIcon({className: 'icon-marker bg-dark-blue'});
 var lightBluePin = L.divIcon({className: 'icon-marker bg-light-blue'});
@@ -126,6 +127,7 @@ class PositionRenderer extends Component {
     }
 
     function getPinColor(p) {
+      if (p.status === "offline") {return offlinePin;}
       if (p.sinr === undefined) {return grayPin;}
       if (p.sinr > 20){return darkBluePin;}
       if (p.sinr > 15){return lightBluePin;}
