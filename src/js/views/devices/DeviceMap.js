@@ -37,12 +37,15 @@ class PositionRenderer extends Component {
       visible: false,  // is ctxMenu visible?
       selected_device_id : -1,
       isTerrain: false,
+      center: [-21.277057924195354, -47.9590129852295],
+      zoom: 13
     }
 
     this._handleClick = this._handleClick.bind(this);
     this._handleMoveStart = this._handleMoveStart.bind(this);
     this._handleContextMenu = this._handleContextMenu.bind(this);
     this._handleTracking = this._handleTracking.bind(this);
+    this._handleViewPortChange = this._handleViewPortChange.bind(this);
 
     this.setTiles = this.setTiles.bind(this);
   }
@@ -103,6 +106,10 @@ class PositionRenderer extends Component {
 
   };
 
+  _handleViewPortChange(e) {
+    this.setState({center: e.center, zoom: e.zoom});
+  }
+
   resize() {
     if (this.leafletMap !== undefined) {
       this.leafletMap.leafletElement.invalidateSize();
@@ -115,17 +122,6 @@ class PositionRenderer extends Component {
   }
 
   render() {
-    function NoData() {
-      return (
-        <div className="full-height valign-wrapper background-info subtle relative graph report-problem">
-          <div className="horizontal-center">
-            <i className="material-icons">report_problem</i>
-            <div>No position data available</div>
-          </div>
-        </div>
-      )
-    }
-
     function getPinColor(p) {
       if (p.status === "offline") {return offlinePin;}
       if (p.sinr === undefined) {return grayPin;}
@@ -150,11 +146,6 @@ class PositionRenderer extends Component {
       }
       return result;
     }, []);
-
-
-    if (parsedEntries.length == 0) {
-      return (<NoData />);
-    }
 
     const contextMenu = this.state.visible ? (
       <div ref={ref => {this.root = ref}} className="contextMenu">
@@ -182,11 +173,12 @@ class PositionRenderer extends Component {
     const center = this.props.center ? this.props.center : [-21.272678, -47.958908];
 
     return (
-      <Map center={center}
-           zoom={13}
+      <Map center={this.state.center}
+           zoom={this.state.zoom}
            ref={m => {this.leafletMap = m;}}
            onContextMenu={this._handleClick}
           //  onClick={this._handleClick}
+           onViewportChanged={this._handleViewPortChange}
            onMoveStart={this._handleMoveStart}>
         <LayerBox opacity={this.props.opacity}> </LayerBox>
         {contextMenu}

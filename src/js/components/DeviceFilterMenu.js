@@ -200,8 +200,12 @@ class Filter extends Component {
     let displayMap = {}
     for (let k in this.props.devices) {
       if (this.props.devices.hasOwnProperty(k)) {
-        displayMap[k] = (this.props.devices[k].label.match(re) !== null) &&
-                        (this.props.devices[k].protocol.match(re) !== null);
+        if (updated.length == 0) {
+          displayMap[k] = false;
+        } else {
+          displayMap[k] = (this.props.devices[k].label.match(re) !== null) &&
+                          (this.props.devices[k].protocol.match(re) !== null);
+        }
       }
     }
 
