@@ -455,7 +455,7 @@ class DeviceMap extends Component {
               return updated;
             }));
           }
-          if (device.hasPosition) {
+          if (device.hasPosition && (!device.hide)) {
             validDevices++;
           }
           pointList.push(device);
