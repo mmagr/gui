@@ -15,7 +15,7 @@ import { Link } from 'react-router'
 
 import { LayerGroup, LayersControl, Map, TileLayer, Marker, Popup,Tooltip, Point } from 'react-leaflet';
 import { divIcon } from 'leaflet';
-import { ImageOverlay , latLngBounds } from 'react-leaflet'
+import { ImageOverlay , latLngBounds, ScaleControl } from 'react-leaflet'
 import ReactResizeDetector from 'react-resize-detector';
 
 import io from 'socket.io-client';
@@ -200,6 +200,7 @@ class PositionRenderer extends Component {
               </Tooltip>
             </Marker>
         )})}
+        <ScaleControl />
       </Map>
     )
   }
