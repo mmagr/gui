@@ -387,9 +387,13 @@ class AttrSelector extends Component {
 // TODO do this properly, using props.children
 function PositionWrapper(props) {
   const device = props.devices[props.device_id];
-  return (
-    <PositionRenderer devices={[device]} allowContextMenu={false} center={device.position}/>
-  )
+  if (device && device.position) {
+    return (
+      <PositionRenderer devices={[device]} allowContextMenu={false} center={device.position}/>
+    )
+  }
+
+  return null;
 }
 
 // TODO do this properly, using props.children

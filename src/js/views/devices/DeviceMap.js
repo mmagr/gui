@@ -37,8 +37,8 @@ class PositionRenderer extends Component {
       visible: false,  // is ctxMenu visible?
       selected_device_id : -1,
       isTerrain: false,
-      center: [-21.277057924195354, -47.9590129852295],
-      zoom: 13
+      center: (this.props.center ? this.props.center : [-21.277057924195354, -47.9590129852295]),
+      zoom: (this.props.zoom ? this.props.zoom : 13)
     }
 
     this._handleClick = this._handleClick.bind(this);
@@ -169,8 +169,6 @@ class PositionRenderer extends Component {
       'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZm1lc3NpYXMiLCJhIjoiY2o4dnZ1ZHdhMWg5azMycDhncjdqMTg1eiJ9.Y75W4n6dTd9DOpctpizPrQ'
     )
     const attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors';
-
-    const center = this.props.center ? this.props.center : [-21.272678, -47.958908];
 
     return (
       <Map center={this.state.center}
