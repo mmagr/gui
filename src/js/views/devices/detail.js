@@ -332,6 +332,7 @@ class AttrSelector extends Component {
   handleAddAttribute(event) {
     event.preventDefault();
     if (this.state.new_attr == null){ return; }
+    if (this.props.selected.includes(this.state.new_attr)) { return; }
 
     const attrList = this.props.selected.concat([this.state.new_attr]);
     MeasureActions.fetchMeasure.defer(this.props.deviceid,attrList,1);
