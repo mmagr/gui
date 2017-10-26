@@ -174,6 +174,7 @@ class PositionRenderer extends Component {
       <Map center={this.state.center}
            zoom={this.state.zoom}
            ref={m => {this.leafletMap = m;}}
+           doubleClickZoom={false}
            onContextMenu={this._handleClick}
           //  onClick={this._handleClick}
            onViewportChanged={this._handleViewPortChange}
