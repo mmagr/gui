@@ -15,7 +15,7 @@ import { Link } from 'react-router'
 
 import { LayerGroup, LayersControl, Map, TileLayer, Marker, Popup,Tooltip, Point } from 'react-leaflet';
 import { divIcon } from 'leaflet';
-import { ImageOverlay , latLngBounds } from 'react-leaflet'
+import { ImageOverlay , latLngBounds, ScaleControl } from 'react-leaflet'
 import ReactResizeDetector from 'react-resize-detector';
 
 import io from 'socket.io-client';
@@ -37,8 +37,8 @@ class PositionRenderer extends Component {
       visible: false,  // is ctxMenu visible?
       selected_device_id : -1,
       isTerrain: false,
-      center: [-21.277057924195354, -47.9590129852295],
-      zoom: 13
+      center: (this.props.center ? this.props.center : [-21.277057924195354, -47.9590129852295]),
+      zoom: (this.props.zoom ? this.props.zoom : 13)
     }
 
     this._handleClick = this._handleClick.bind(this);
@@ -170,8 +170,6 @@ class PositionRenderer extends Component {
     )
     const attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors';
 
-    const center = this.props.center ? this.props.center : [-21.272678, -47.958908];
-
     return (
       <Map center={this.state.center}
            zoom={this.state.zoom}
@@ -200,6 +198,7 @@ class PositionRenderer extends Component {
               </Tooltip>
             </Marker>
         )})}
+        <ScaleControl />
       </Map>
     )
   }

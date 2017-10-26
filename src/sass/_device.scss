@@ -101,6 +101,9 @@
     border: none;
     transition: ease 350ms;
   }
+  &:focus {
+    color: #fff;
+  }
 }
 
 
