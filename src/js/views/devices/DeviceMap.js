@@ -79,7 +79,7 @@ class PositionRenderer extends Component {
     if (!this.props.allowContextMenu){
       return false;
     }
-    event = e.originalEvent;
+    let event = e.originalEvent;
     event.preventDefault();
     this.setState({ visible: true , selected_device_id: device_id});
 
