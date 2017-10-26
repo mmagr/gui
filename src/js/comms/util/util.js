@@ -1,4 +1,5 @@
 import LoginActions from '../../actions/LoginActions';
+import moment from 'moment'
 
 function FetchError(data, message) {
   this.name = "FetchError";
@@ -128,14 +129,11 @@ class Util {
 
   // to get formatted date
   timestamp_to_date(timestamp) {
-      let date = new Date(null);
-      date.setSeconds(Math.floor(timestamp));
-      return date.toLocaleString();
+      return moment(timestamp).format('MMM, D, YYYY HH:mm:ss');
   }
 
   iso_to_date(timestamp) {
-    let date = new Date(timestamp);
-    return date.toLocaleString();
+    return moment(timestamp).format('MMM, D, YYYY HH:mm:ss');
   }
 }
 

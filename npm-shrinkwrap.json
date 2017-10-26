@@ -2211,9 +2211,9 @@
       }
     },
     "moment": {
-      "version": "2.18.1",
-      "from": "moment@>=2.10.6 <3.0.0",
-      "resolved": "https://registry.npmjs.org/moment/-/moment-2.18.1.tgz"
+      "version": "2.19.1",
+      "from": "moment@latest",
+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.19.1.tgz"
     },
     "ms": {
       "version": "2.0.0",

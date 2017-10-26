@@ -467,15 +467,18 @@ class DeviceDetail extends Component {
 }
 
 function ConnectivityStatus(props) {
-  if (props.status == "online") {
-    return (
-      <span className='status-on-off clr-green'><i className="fa fa-info-circle" />Online</span>
-    )
-  } else {
-    return (
-      <span className='status-on-off clr-red'><i className="fa fa-info-circle" />Offline</span>
-    )
+  if (props.data && props.data.data){
+    const status = props.data.data['device-status'][0].value;
+    if (status == "online") {
+      return (
+        <span className='status-on-off clr-green'><i className="fa fa-info-circle" />Online</span>
+      )
+    }
   }
+
+  return (
+    <span className='status-on-off clr-red'><i className="fa fa-info-circle" />Offline</span>
+  )
 }
 
 class ViewDeviceImpl extends Component {
@@ -503,7 +506,9 @@ class ViewDeviceImpl extends Component {
             <DeviceUserActions deviceid={device.id} confirmTarget="confirmDiag"/>
           </div>
           <div className="box-sh">
-            <ConnectivityStatus status={device.status} />
+            <AltContainer store={MeasureStore}>
+              <ConnectivityStatus status={device.status} />
+            </AltContainer>
           </div>
         </SubHeader>
         <DeviceDetail deviceid={device.id} devices={this.props.devices}/>
@@ -533,8 +538,7 @@ class ViewDevice extends Component {
       fields.map((field) => {
         if (data.hasOwnProperty(field)){
           if (field == 'ts') {
-            device_data[field] = (new Date()).toLocaleString();
-
+            device_data[field] = util.timestamp_to_date(Date.now());
           } else {
             device_data[field] = data[field].value;
           }
