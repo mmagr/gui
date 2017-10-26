@@ -318,7 +318,7 @@ function StatusDisplay(props) {
 class AttrSelector extends Component {
   constructor(props) {
     super(props);
-    this.state = {new_attr: null};
+    this.state = {new_attr: ""};
     this.handleSelectedAttribute = this.handleSelectedAttribute.bind(this);
     this.handleAddAttribute = this.handleAddAttribute.bind(this);
     this.handleClear = this.handleClear.bind(this);
@@ -331,13 +331,13 @@ class AttrSelector extends Component {
 
   handleAddAttribute(event) {
     event.preventDefault();
-    if (this.state.new_attr == null){ return; }
+    this.setState({new_attr: ""});
+    if (this.state.new_attr == ""){ return; }
     if (this.props.selected.includes(this.state.new_attr)) { return; }
 
     const attrList = this.props.selected.concat([this.state.new_attr]);
     MeasureActions.fetchMeasure.defer(this.props.deviceid,attrList,1);
     this.props.onChange(attrList);
-    this.setState({new_attr: null});
   }
 
   handleClear(event) {
@@ -356,9 +356,9 @@ class AttrSelector extends Component {
         <div className="col s12 p16">
           <div className="input-field col s12">
             <MaterialSelect id="attributes-select" name="attribute"
-                            value={this.state.selected_attribute}
+                            value={this.state.new_attr}
                             onChange={this.handleSelectedAttribute}>
-              <option value={null}>Select attribute to display</option>
+              <option value="">Select attribute to display</option>
               {this.props.attrs.map((attr) => (
                 <option value={attr.name} key={attr.object_id} >{attr.name}</option>
               ))}
