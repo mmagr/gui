@@ -64,23 +64,25 @@ class ListRender extends Component {
       )
     }
 
-    const devices = this.props.devices;
-    if ((devices.length > 0) && (devices.constructor == Array)){
+    let deviceList = this.props.devices;
+    if (this.props.devices.constructor == Object) {
+      deviceList = [];
+      for (let k in this.props.devices) {
+        if (this.props.devices.hasOwnProperty(k)){
+          deviceList.push(this.props.devices[k]);
+        }
+      }
+    }
+
+    const devices = deviceList.sort((a, b) => {
+      return a.label.localeCompare(b.label);
+    });
+
+    if (devices.length > 0) {
       return (
         <div className="row">
           { devices.map((device, idx) =>
             <ListItem device={device} key={device.id}
-                      toggleDisplay={this.props.toggleDisplay}
-                      displayMap={this.props.displayMap} />
-          )}
-        </div>
-      )
-    } else if ((Object.keys(devices).length > 0) && (devices.constructor == Object)) {
-      return (
-        <div className="row">
-          { Object.keys(devices).map((device_id) =>
-            <ListItem device={devices[device_id]}
-                      key={device_id}
                       toggleDisplay={this.props.toggleDisplay}
                       displayMap={this.props.displayMap} />
           )}
