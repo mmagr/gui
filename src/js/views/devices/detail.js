@@ -467,13 +467,11 @@ class DeviceDetail extends Component {
 }
 
 function ConnectivityStatus(props) {
-  if (props.data && props.data.data){
-    const status = props.data.data['device-status'][0].value;
-    if (status == "online") {
-      return (
-        <span className='status-on-off clr-green'><i className="fa fa-info-circle" />Online</span>
-      )
-    }
+  const status = props.devices[props.device_id]['_status'];
+  if (status == "online") {
+    return (
+      <span className='status-on-off clr-green'><i className="fa fa-info-circle" />Online</span>
+    )
   }
 
   return (
@@ -506,8 +504,8 @@ class ViewDeviceImpl extends Component {
             <DeviceUserActions deviceid={device.id} confirmTarget="confirmDiag"/>
           </div>
           <div className="box-sh">
-            <AltContainer store={MeasureStore}>
-              <ConnectivityStatus status={device.status} />
+            <AltContainer store={DeviceStore}>
+              <ConnectivityStatus device_id={device.id} />
             </AltContainer>
           </div>
         </SubHeader>
