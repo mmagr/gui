@@ -130,32 +130,35 @@ class Graph extends Component{
 
 // TODO move this to its own component
 function HistoryList(props) {
-  let data = props.data.data[props.attr];
-  let trimmedList = data.filter((i) => {
-    return i.value.trim().length > 0
-  })
-  trimmedList.reverse();
+  const empty = (
+    <div className="full-height background-info valign-wrapper center">
+      <div className="center full-width">No data available</div>
+    </div>
+  );
 
-  if (trimmedList.length > 0) {
-    return (
-      <div className="relative full-height" >
-        <div className="full-height full-width scrollable history-list">
-          {trimmedList.map((i,k) => {
-            return (<div className={"row " + (k % 2 ? "alt-row" : "")} key={i.ts}>
-              <div className="col s7 value">{i.value}</div>
-              <div className="col s5 label">{util.iso_to_date(i.ts)}</div>
-            </div>
-          )})}
+  if (props.data && props.data.data && props.data.data[props.attr]){
+    let data = props.data.data[props.attr];
+    let trimmedList = data.filter((i) => {
+      return i.value.trim().length > 0
+    })
+    trimmedList.reverse();
+
+    if (trimmedList.length > 0) {
+      return (
+        <div className="relative full-height" >
+          <div className="full-height full-width scrollable history-list">
+            {trimmedList.map((i,k) => {
+              return (<div className={"row " + (k % 2 ? "alt-row" : "")} key={i.ts}>
+                <div className="col s7 value">{i.value}</div>
+                <div className="col s5 label">{util.iso_to_date(i.ts)}</div>
+              </div>
+            )})}
+          </div>
         </div>
-      </div>
-    )
-  } else {
-    return (
-      <div className="full-height background-info valign-wrapper center">
-        <div className="center full-width">No data available</div>
-      </div>
-    )
+      )
+    }
   }
+  return empty;
 }
 
 // TODO move this to its own component
