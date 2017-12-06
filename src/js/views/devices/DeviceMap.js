@@ -164,15 +164,16 @@ class PositionRenderer extends Component {
     )
 
     const tileURL = this.state.isTerrain ? (
-      'https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2ZyYW5jaXNjbyIsImEiOiJjajhrN3VlYmowYXNpMndzN2o2OWY1MGEwIn0.xPCJwpMTrID9uOgPGK8ntg'
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
     ) : (
-      'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZm1lc3NpYXMiLCJhIjoiY2o4dnZ1ZHdhMWg5azMycDhncjdqMTg1eiJ9.Y75W4n6dTd9DOpctpizPrQ'
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
     )
     const attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> and Mapbox contributors';
 
     return (
       <Map center={this.state.center}
            zoom={this.state.zoom}
+           maxZoom={17}
            ref={m => {this.leafletMap = m;}}
            doubleClickZoom={false}
            onContextMenu={this._handleClick}
@@ -186,7 +187,8 @@ class PositionRenderer extends Component {
           <div className="mapView" onClick = {() => this.setTiles(true)}>Terrain</div>
           <div className="satelliteView" onClick = {() => this.setTiles(false)}>Satellite</div>
         </div>
-        <TileLayer url={tileURL} attribution={attribution} />
+        <TileLayer url={tileURL} />
+        {/* <TileLayer url={tileURL} attribution={attribution} /> */}
         <LayerAntenna />
         {parsedEntries.map((k) => {
           return (
