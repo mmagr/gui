@@ -524,7 +524,7 @@ class DeviceMap extends Component {
           {this.state.mapquest ? (
             <PositionRenderer devices={pointList} toggleTracking={this.toggleTracking} opacity={this.state.opacity} allowContextMenu={true}/>
           ) : (
-            <div>dummy</div>
+            null
           )}
           <SideBar devices={this.props.devices} statusMap={this.state.displayMap}
                    toggleDisplay={this.toggleDisplay} setDisplayMap={this.setDisplayMap} hideAll={this.hideAll} showAll={this.showAll} />
